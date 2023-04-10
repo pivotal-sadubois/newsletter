@@ -1,6 +1,9 @@
-# Newsletter Application This Project has been designed as a demo application for the Tanzu Applicaiton Platform (TAP). The Demo currently only
-implements the User Profile Management as part of the Guestbook application and is basing on a
-the guestbook-user-db, guestbook-user-svc and the guestbook-ui.
+# Newsletter Application - A Spring Boot / AngularJS / PostgreSQL CRUD showcase
+
+This Project has been designed as a demo application for the Tanzu Applicaiton Platform (TAP). It's
+microservice architecture is basing on the Newsletter WebUI (newsletter-ui) basing on AngularJS, the 
+Subscription Service (newsletter-subscription) basingon Spring Boot and a PostgreSQL database backend
+(newsletter-db). 
 
 The picture below shows the architecture of the Newsletter Application:
 ![guestbook-architecture](images/newsletter.jpg)
