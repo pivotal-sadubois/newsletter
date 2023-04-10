@@ -1,0 +1,16 @@
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: newsletter
+  description: Newsletter Application Demo
+  annotations:
+    "backstage.io/kubernetes-label-selector": "app.kubernetes.io/part-of=newsletter"
+    'backstage.io/techdocs-ref': dir:.
+#  links:
+#    - url: http://example.com/domain/cloud-apps/
+#      title: Domain Readme
+#    - url: http://example.com/domains/cloud-apps/dashboard
+#       title: Cloud Apps Dashboard
+#       icon: dashboard
+spec:
+  owner: newsletter-team

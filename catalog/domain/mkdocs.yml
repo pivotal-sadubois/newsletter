@@ -1,0 +1,7 @@
+site_name: 'Guestbook Domain Docs'
+
+nav:
+  - Overview Domain: index.md
+
+plugins:
+  - techdocs-core

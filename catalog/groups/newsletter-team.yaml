@@ -1,0 +1,39 @@
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: newsletter-team
+  description: Developing AngularJS, Java/Spring and Python
+  links:
+    - url: "https://vmware.slack.com/archives/C03V4CG0FT8"
+      title: Tanzu SE Slack channel
+      icon: chat
+spec:
+  type: team
+  profile:
+    displayName: Newsletter Team
+    email: tanzu-se-southeast@vmware.com
+    picture: "https://blogs.vmware.com/cloudprovider/files/2021/09/logo-vmware-tanzu-square-Header-327x324.png"
+  parent: tanzu-se-org
+  children: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: sdubois
+spec:
+  profile:
+    displayName: Sacha Dubois
+    email: sdubois@vmware.com
+    picture: "https://secure.gravatar.com/avatar/b40de695b3a53ccf3ab2ca398a504566?s=64"
+  memberOf: [newsletter-team]
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: sschmidt
+spec:
+  profile:
+    displayName: Stefan (Steve) Schmidt
+    email: sschmidt@vmware.com
+    picture: "https://media.licdn.com/dms/image/C5103AQGEo1RqkfAtXw/profile-displayphoto-shrink_100_100/0/1516979507749?e=1686182400&v=beta&t=Xdhmp1_yjFlIRrBtqJtAoq4yWH_KA7vZuuRVD1MJP7w"
+  memberOf: [newsletter-team]

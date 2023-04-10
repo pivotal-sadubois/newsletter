@@ -1,0 +1,20 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: newsletter-subscription
+  annotations:
+    "backstage.io/kubernetes-label-selector": "app.kubernetes.io/part-of=newsletter"
+    'backstage.io/techdocs-ref': dir:.
+  links:
+    - url: "https://vmware.wavefront.com/u/gdq77TV7mG?t=map-sales-sandbox"
+      title: Dashboard
+      icon: dashboard
+
+spec:
+  type: service
+  lifecycle: experimental
+  owner: newsletter-team
+  system: newsletter-subscription
+  domain: newsletter
+  providesApis:
+    - blockchain-api-contour.e2e.corby.cc

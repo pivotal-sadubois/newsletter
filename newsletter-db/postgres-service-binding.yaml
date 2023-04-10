@@ -1,0 +1,12 @@
+# postgres-service-binding.yaml
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: postgres-service-binding
+  labels:
+    servicebinding.io/controller: "true"
+rules:
+- apiGroups: ["sql.tanzu.vmware.com"]
+  resources: ["Postgres"]
+  verbs: ["get", "list", "watch"]

@@ -1,0 +1,7 @@
+site_name: 'Guestbook Component components/user-profile-database'
+
+nav:
+  - Overview Component: index.md
+
+plugins:
+  - techdocs-core

@@ -1,0 +1,7 @@
+site_name: 'Guestbook API1111 Docs'
+
+nav:
+  - Overview API: index.md
+
+plugins:
+  - techdocs-core

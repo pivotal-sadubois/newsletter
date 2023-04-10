@@ -1,0 +1,10 @@
+site_name: 'Newsletter Application Docs'
+
+nav:
+  - Application: Architecture index.md
+  - Developer Environment: developer_env.md
+  - Deploy on local Workstation: deploy_local.md
+  - Deploy on Kubernetes with Tanzu Application Platform (TAP): deploy_tap.md
+
+plugins:
+  - techdocs-core

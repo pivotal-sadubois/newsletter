@@ -1,0 +1,32 @@
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: newsletter-subscription
+  description: This API create, delete, list and modifies newsletter subscriptions
+  annotations:
+    "backstage.io/kubernetes-label-selector": "app.kubernetes.io/part-of=newsletter"
+    'backstage.io/techdocs-ref': dir:.
+  links:
+    - url: https://api.agify.io
+      title: API Definition
+      icon: docs
+spec:
+  type: openapi
+  lifecycle: experimental
+  owner: newsletter-team
+  system: newsletter-subscription
+  domain: newsletter
+  definition: |
+    openapi: "3.0.0"
+    info:
+      version: 1.0.0
+      title: Artist API
+      license:
+        name: MIT
+    servers:
+      - url: http://artist.spotify.net/v1
+    paths:
+      /artists:
+        get:
+          summary: List all artists
+
