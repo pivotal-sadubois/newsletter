@@ -6,7 +6,7 @@ Subscription Service (newsletter-subscription) basingon Spring Boot and a Postgr
 (newsletter-db). 
 
 The picture below shows the architecture of the Newsletter Application:
-![guestbook-architecture](images/newsletter.jpg)
+![newsletter-architecture](catalog/docs/images/newsletter.jpg)
 
 ### Applicaiton Components
 - Newsletter User Interface (newsletter-ui)
