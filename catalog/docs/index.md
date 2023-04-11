@@ -10,8 +10,8 @@ The picture below shows the architecture of the Newsletter Application:
 
 ### Applicaiton Components
 - Newsletter User Interface (newsletter-ui)
-- Newsletter User Service (newsletter-user-service)
-- Newsletter User Database (newsletter-user-db)
+- Newsletter Subscription Service (newsletter-subscription)
+- Newsletter Database (newsletter-db)
 - Newsletter Sailing Service (newsletter-mailing-service)
 
 ## Newsletter User Interface (newsletter-ui)
@@ -19,15 +19,15 @@ The Newsletter User Interface is a Web Frontent basing on AngularJS that allows 
 register themself to the Newsleter Service and modify or delete their data records afterwards. The Newsleter User Interfaces interacts with the 
 API provided Newsleter User Service to abstract direct connection to the Newsletter User Database. 
 
-## Newsletter User Service (newsletter-user-service)
-The Newsletter User Service is the Backend of the Newsletter User Interface and provides an interface (RestFULL) for the application components 
+## Newsletter Subscription Service (newsletter-suscription)
+The Newsletter Subscription Service is the Backend of the Newsletter User Interface and provides an interface (RestFULL) for the application components 
 (newletter-ui or the mailing-service) to interact with cwits API. The the Newsletter User Service uses a PostgreSQL database backend to store 
 persistent user data records. This abstraction allows better to controll who is acessing the service and new service features can be implemented 
 by introducting a new API Version. As well its planned to integrate a circuit breaker in the NEwsleter User Service in a fulure version to prent 
 the service from overloading.
 
-## Newsletter User Database (newsletter-user-db)
-The Newsletter User Database acts as backend for the Newsletter User Service and is basing on a PostgreSQL Database running in a container with 
+## Newsletter Database (newsletter-db)
+The Newsletter Database acts as backend for the Newsletter User Service and is basing on a PostgreSQL Database running in a container with 
 the same Kubernetes Namespace as the application. The Database is deployed and Managed trough the PostgreSQL Operator running in the default namespace
 of the same cluster. Morge information about the VMware PostgreSQL Operator can be seen in the documentation 
 [VMware SQL with Postgres for Kubernetes Operator](https://docs.vmware.com/en/VMware-SQL-with-Postgres-for-Kubernetes/2.0/vmware-postgres-k8s/GUID-install-operator.html).
