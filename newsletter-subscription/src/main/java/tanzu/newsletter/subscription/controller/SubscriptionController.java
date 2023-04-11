@@ -16,11 +16,31 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import tanzu.newsletter.subscription.exception.ResourceNotFoundException;
 import tanzu.newsletter.subscription.model.Subscription;
 import tanzu.newsletter.subscription.repository.SubscriptionRepository;
 
-@CrossOrigin(origins = "http://localhost:4200")
+//import javax.validation.Valid;
+
+@OpenAPIDefinition(
+        info = @Info(
+                title = "Subscription Management API",
+                version = "1.0"),
+        tags = @Tag(
+                name = "Subscription Management REST API"))
+
+
+@CrossOrigin
 @RestController
 @RequestMapping("/api/v1/")
 public class SubscriptionController {
@@ -28,19 +48,64 @@ public class SubscriptionController {
 	@Autowired
 	private SubscriptionRepository subscriptionRepository;
 	
-	// get all employees
+	// get all subscriptions
+	@Operation(summary = "Get customer profile.", method = "GET", tags = "Customer Profile CRUD")
+	@ApiResponses({
+		@ApiResponse(
+				responseCode = "200",
+				description = "Customer profile retrieved successfully."
+		),
+		@ApiResponse(
+				responseCode = "404",
+				description = "Customer profile not found.",
+				content = @Content(schema = @Schema(implementation = Subscription.class))
+		)
+	})
 	@GetMapping("/subscription")
 	public List<Subscription> getAllSubscription(){
 		return subscriptionRepository.findAll();
 	}		
 	
 	// create employee rest api
+
+	
+	@Operation(summary = "Saves provided customer profile.", method = "POST", tags = "Customer Profile CRUD")
+	@ApiResponses({
+		@ApiResponse(
+				responseCode = "201",
+				description = "Customer profile successfully saved.",
+				headers = @Header(
+						name = "Location",
+						description = "Contains path which can be used to retrieve saved profile. Last element is it's ID.",
+						required = true,
+						schema = @Schema(type = "string"))
+		),
+		@ApiResponse(
+				responseCode = "400",
+				description = "Passed customer profile is invalid."
+		)
+})
 	@PostMapping("/subscription")
 	public Subscription createSubscription(@RequestBody Subscription subscription) {
 		return subscriptionRepository.save(subscription);
 	}
 	
 	// get employee by id rest api
+ 
+/* 
+	@ApiResponses(value = { 
+		@ApiResponse(responseCode = "200", description = "Found the book", 
+		  content = { @Content(mediaType = "application/json", 
+			schema = @Schema(implementation = Book.class)) }),
+		@ApiResponse(responseCode = "400", description = "Invalid id supplied", 
+		  content = @Content), 
+		@ApiResponse(responseCode = "404", description = "Book not found", 
+		  content = @Content) })
+
+*/
+	//@Operation(summary = "Get customer profile.", method = "GET", tags = "Customer Profile CRUD")
+	
+
 	@GetMapping("/subscription/{id}")
 	public ResponseEntity<Subscription> getSubscriptionById(@PathVariable Long id) {
 		Subscription subscription = subscriptionRepository.findById(id)
