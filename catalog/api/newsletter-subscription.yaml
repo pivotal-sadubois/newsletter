@@ -73,20 +73,28 @@ spec:
                     $ref: '#/components/schemas/Subscription'
               description: Customer profile successfully saved.
               headers:
-                - Location:
-                    description: Contains path which can be used to retrieve saved profile.
-                      Last element is it's ID.
+                email_id:
+                  description: Email address of the user requesting a newsletter subscriptions.
+                  schema:
+                    type: string
+                  style: simple
+                first_name:
+                  description: First Name of the user requesting a newsletter subscriptions
+                  schema:
+                    type: string
+                  style: simple
+                id:
+                  description: A ascending uniq Id beginning from 1. This Id can be used
+                    to identify a record.
                   required: true
-                    schema:
-                      type: string
-                    style: simple
-                - FirstName:
-                    description: Contains path which can be used to retrieve saved profile.
-                      Last element is it's ID.
-                  required: true
-                    schema:
-                      type: string
-                    style: simple
+                  schema:
+                    type: string
+                  style: simple
+                last_name:
+                  description: Last Name of the user requesting a newsletter subscriptions.
+                  schema:
+                    type: string
+                  style: simple
             "400":
               content:
                 'application/json':
