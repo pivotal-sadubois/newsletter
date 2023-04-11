@@ -42,7 +42,7 @@ spec:
           responses:
             "200":
               content:
-                '*/*':
+                'application/json':
                   schema:
                     items:
                       $ref: '#/components/schemas/Subscription'
@@ -50,7 +50,7 @@ spec:
               description: Customer profile retrieved successfully.
             "404":
               content:
-                '*/*':
+                'application/json':
                   schema:
                     $ref: '#/components/schemas/Subscription'
               description: Customer profile not found.
@@ -73,16 +73,23 @@ spec:
                     $ref: '#/components/schemas/Subscription'
               description: Customer profile successfully saved.
               headers:
-                Location:
-                  description: Contains path which can be used to retrieve saved profile.
-                    Last element is it's ID.
+                - Location:
+                    description: Contains path which can be used to retrieve saved profile.
+                      Last element is it's ID.
                   required: true
-                  schema:
-                    type: string
-                  style: simple
+                    schema:
+                      type: string
+                    style: simple
+                - FirstName:
+                    description: Contains path which can be used to retrieve saved profile.
+                      Last element is it's ID.
+                  required: true
+                    schema:
+                      type: string
+                    style: simple
             "400":
               content:
-                '*/*':
+                'application/json':
                   schema:
                     $ref: '#/components/schemas/Subscription'
               description: Passed customer profile is invalid.
