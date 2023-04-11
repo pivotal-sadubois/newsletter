@@ -21,6 +21,20 @@ spec:
       title: Subscription Management API
       version: "1.0"
     openapi: 3.0.1
+    components:
+      schemas:
+        Subscription:
+          properties:
+            emailId:
+              type: string
+            firstName:
+              type: string
+            id:
+              format: int64
+              type: integer
+            lastName:
+              type: string
+          type: object
     paths:
       /api/v1/subscription:
         get:
