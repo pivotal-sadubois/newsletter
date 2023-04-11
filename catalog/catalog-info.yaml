@@ -12,7 +12,6 @@ spec:
     - ./components/newsletter-db/newsletter-db.yaml
     - ./components/newsletter-subscription/newsletter-subscription.yaml
     - ./components/newsletter-ui/newsletter-ui.yaml
-    - ./api/newsletter-subscription.yaml
     - ./api/newsletter-subscription-api.yaml
     - ./systems/newsleter-subscription.yaml
     - ./systems/newsleter-ui.yaml
