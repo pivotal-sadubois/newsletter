@@ -24,7 +24,6 @@ spec:
     components:
       schemas:
         Subscription:
-          type: object
           properties:
             emailId:
               type: string
@@ -35,6 +34,7 @@ spec:
               type: integer
             lastName:
               type: string
+          type: object
     paths:
       /api/v1/subscription:
         get:
