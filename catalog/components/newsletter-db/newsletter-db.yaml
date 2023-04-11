@@ -1,7 +1,7 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: newsletter-database
+  name: newsletter-db
   annotations:
     "backstage.io/kubernetes-label-selector": "app.kubernetes.io/part-of=newsletter"
     'backstage.io/techdocs-ref': dir:.
@@ -14,7 +14,7 @@ spec:
   type: service
   lifecycle: experimental
   owner: newsletter-team
-  system: newsletter-database
+  system: newsletter-db
   domain: newsletter
   providesApis:
     - blockchain-api-contour.e2e.corby.cc

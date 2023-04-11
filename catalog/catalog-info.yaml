@@ -9,12 +9,12 @@ spec:
   targets:
     - ./resources/newsletter-database/newsletter-database.yaml
     - ./groups/newsletter-team.yaml
-    - ./components/newsletter-database/newsletter-database.yaml
+    - ./components/newsletter-db/newsletter-db.yaml
     - ./components/newsletter-subscription/newsletter-subscription.yaml
     - ./components/newsletter-ui/newsletter-ui.yaml
     - ./api/newsletter-subscription.yaml
     - ./api/newsletter-subscription-api.yaml
     - ./systems/newsleter-subscription.yaml
     - ./systems/newsleter-ui.yaml
-    - ./systems/newsleter-database.yaml
+    - ./systems/newsleter-db.yaml
     - ./domain/newsletter.yaml
