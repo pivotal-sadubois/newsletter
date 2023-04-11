@@ -19,6 +19,17 @@ spec:
   definition: |
     components:
       schemas:
+        ErrorResponse:
+          properties:
+            type: 
+              type: string
+            title: 
+              type: string
+            detail: 
+              type: string
+            instane: 
+              type: string
+          type: object
         Subscription:
           properties:
             emailId:
@@ -36,10 +47,9 @@ spec:
           - lastName
           - emailId
           example:
-            firstName: Sacha
-            lastName: Dubois
-            emailId: sacha.dubois@icloud.com
-            id: 1
+            firstName: Hans
+            lastName: Muster
+            emailId: hans.muster@gmail.com
     info:
       title: Subscription Management API
       version: "1.0"
@@ -108,7 +118,7 @@ spec:
               content:
                 'application/json':
                   schema:
-                    $ref: '#/components/schemas/Subscription'
+                    $ref: '#/components/schemas/ErrorResponse'
               description: Passed customer profile is invalid.
           summary: Saves provided customer profile.
           tags:
