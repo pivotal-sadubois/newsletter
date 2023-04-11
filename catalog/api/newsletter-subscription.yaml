@@ -68,7 +68,7 @@ spec:
           responses:
             "201":
               content:
-                '*/*':
+                'application/json':
                   schema:
                     $ref: '#/components/schemas/Subscription'
               description: Customer profile successfully saved.
