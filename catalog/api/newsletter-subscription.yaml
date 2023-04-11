@@ -35,11 +35,12 @@ spec:
               type: integer
             lastName:
               type: string
-            required:
-            - name
-            example:
-              name: Puma
-              id: 1
+          required:
+          - lastName
+          - firstName
+          example:
+            name: Puma
+            id: 1
     paths:
       /api/v1/subscription:
         get:
