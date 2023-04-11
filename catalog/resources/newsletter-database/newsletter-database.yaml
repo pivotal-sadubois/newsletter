@@ -9,4 +9,4 @@ metadata:
 spec:
   type: database
   owner: newsletter-team
-  system: newsletter-subscription
+  system: newsletter-database
