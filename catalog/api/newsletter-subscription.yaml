@@ -78,59 +78,13 @@ spec:
                   schema:
                     $ref: '#/components/schemas/Subscription'
               description: User's subscription profile successfully saved.
-              headers:
-                id:
-                  description: A ascending uniq Id beginning from 1. This Id can be used
-                    to identify a record.
-                  required: false
-                  schema:
-                    type: string
-                  style: simple
-                email_id:
-                  description: Email address of the user requesting a newsletter subscriptions.
-                  schema:
-                    type: string
-                  style: simple
-                first_name:
-                  description: First Name of the user requesting a newsletter subscriptions
-                  schema:
-                    type: string
-                  style: simple
-                last_name:
-                  description: Last Name of the user requesting a newsletter subscriptions.
-                  schema:
-                    type: string
-                  style: simple
             "400":
               content:
                 'application/json':
                   schema:
                     $ref: '#/components/schemas/Subscription'
               description: Passed user's subscription profile is invalid.
-              description: Customer profile successfully saved.
-              headers:
-                id:
-                  description: A ascending uniq Id beginning from 1. This Id can be used
-                    to identify a record.
-                  required: false
-                  schema:
-                    type: string
-                  style: simple
-                email_id:
-                  description: Email address of the user requesting a newsletter subscriptions.
-                  schema:
-                    type: string
-                  style: simple
-                first_name:
-                  description: First Name of the user requesting a newsletter subscriptions
-                  schema:
-                    type: string
-                  style: simple
-                last_name:
-                  description: Last Name of the user requesting a newsletter subscriptions.
-                  schema:
-                    type: string
-                  style: simple
+              description: Customer profile successfully saved
           summary: Saves provided customer profile.
           tags:
           - Customer Profile CRUD
