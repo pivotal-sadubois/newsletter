@@ -17,10 +17,6 @@ spec:
   system: newsletter-subscription
   domain: newsletter
   definition: |
-    info:
-      title: Subscription Management API
-      version: "1.0"
-    openapi: 3.0.1
     components:
       schemas:
         Subscription:
@@ -35,6 +31,10 @@ spec:
             lastName:
               type: string
           type: object
+    info:
+      title: Subscription Management API
+      version: "1.0"
+    openapi: 3.0.1
     paths:
       /api/v1/subscription:
         get:
@@ -42,7 +42,7 @@ spec:
           responses:
             "200":
               content:
-                'application/json':
+                '*/*':
                   schema:
                     items:
                       $ref: '#/components/schemas/Subscription'
@@ -50,7 +50,7 @@ spec:
               description: Customer profile retrieved successfully.
             "404":
               content:
-                'application/json':
+                '*/*':
                   schema:
                     $ref: '#/components/schemas/Subscription'
               description: Customer profile not found.
@@ -68,22 +68,106 @@ spec:
           responses:
             "201":
               content:
-                'application/json':
+                '*/*':
                   schema:
                     $ref: '#/components/schemas/Subscription'
-              description: User's subscription profile successfully saved.
+              description: Customer profile successfully saved.
+              headers:
+                email_id:
+                  description: Email address of the user requesting a newsletter subscriptions.
+                  schema:
+                    type: string
+                  style: simple
+                first_name:
+                  description: First Name of the user requesting a newsletter subscriptions
+                  schema:
+                    type: string
+                  style: simple
+                id:
+                  description: A ascending uniq Id beginning from 1. This Id can be used
+                    to identify a record.
+                  required: true
+                  schema:
+                    type: string
+                  style: simple
+                last_name:
+                  description: Last Name of the user requesting a newsletter subscriptions.
+                  schema:
+                    type: string
+                  style: simple
             "400":
               content:
-                'application/json':
+                '*/*':
                   schema:
                     $ref: '#/components/schemas/Subscription'
-              description: Passed user's subscription profile is invalid.
-              description: Customer profile successfully saved
+              description: Passed customer profile is invalid.
           summary: Saves provided customer profile.
           tags:
           - Customer Profile CRUD
+      /api/v1/subscription/{id}:
+        delete:
+          operationId: deleteSubscription
+          parameters:
+          - in: path
+            name: id
+            required: true
+            schema:
+              format: int64
+              type: integer
+          responses:
+            "200":
+              content:
+                '*/*':
+                  schema:
+                    additionalProperties:
+                      type: boolean
+                    type: object
+              description: OK
+          tags:
+          - subscription-controller
+        get:
+          operationId: getSubscriptionById
+          parameters:
+          - in: path
+            name: id
+            required: true
+            schema:
+              format: int64
+              type: integer
+          responses:
+            "200":
+              content:
+                '*/*':
+                  schema:
+                    $ref: '#/components/schemas/Subscription'
+              description: OK
+          tags:
+          - subscription-controller
+        put:
+          operationId: updateSubscription
+          parameters:
+          - in: path
+            name: id
+            required: true
+            schema:
+              format: int64
+              type: integer
+          requestBody:
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Subscription'
+            required: true
+          responses:
+            "200":
+              content:
+                '*/*':
+                  schema:
+                    $ref: '#/components/schemas/Subscription'
+              description: OK
+          tags:
+          - subscription-controller
     servers:
     - url: https://newsletter-subscription.apps-contour.vsptap.pcfsdu.com
     tags:
     - name: Subscription Management REST API
-            
