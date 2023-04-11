@@ -1,8 +1,8 @@
 apiVersion: backstage.io/v1alpha1
 kind: System
 metadata:
-  name: newsleter-subscription
-  description: Newsletter Subscriptions Management REST API Service
+  name: newsleter-database
+  description: Newsletter Backend Database
   annotations:
     "backstage.io/kubernetes-label-selector": "app.kubernetes.io/part-of=newsletter"
     'backstage.io/techdocs-ref': dir:.

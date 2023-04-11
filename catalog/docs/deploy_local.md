@@ -1,8 +1,8 @@
-# Deploy on the local Laptop/Workstation
+# Newsletter Application - Local deployment
 
-## Deploy the Database Backend guestbook-user-db
-The Guestbook User Service (guestbook-user-svc) requires a persistent database backend. The guestbook-user-svc and the 
-guestbook-user-db belong together but are deployed different depending on the envronment.
+## Deploy the Database Backend newsletter-db
+The Guestbook User Service (newsletter-subscription) requires a persistent database backend. The subscription-subscription and the 
+subscription-db belong together but are deployed different depending on the envronment.
 
 ### Prerequisites
 In order to further develop this application the following tools needs to be setup:
@@ -34,7 +34,7 @@ services:
     image: postgres:14
     restart: always
     environment:
-      - POSTGRES_DB=development
+      - POSTGRES_DB=subscription
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=pgappuser
     ports:

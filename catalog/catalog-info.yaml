@@ -15,4 +15,6 @@ spec:
     - ./api/newsletter-subscription.yaml
     - ./api/newsletter-subscription-api.yaml
     - ./systems/newsleter-subscription.yaml
+    - ./systems/newsleter-ui.yaml
+    - ./systems/newsleter-database.yaml
     - ./domain/newsletter.yaml
