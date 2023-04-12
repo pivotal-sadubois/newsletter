@@ -1,5 +1,10 @@
+# Deploy on Kubernetes with Tanzu Application Platform (TAP)
 
-# Newsletter Databaase (newsletter-db) - Deploy on Tanuu Application Platform (TAP) 
+## Create a Developer Namespace
+Bevore you can install the Newletter Demo Applicaiotn you need to create a Developer Namespace. If not already done, please refer to the guide in the documentation 
+[Tanzu Aoolication Plarform - Create Developer Namespace](https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.5/tap/scst-store-developer-namespace-setup.html).
+
+## Newsletter Databaase (newsletter-db) - Deploy on Tanuu Application Platform (TAP) 
 This document describes the procedure how to deploy the Newsleter Database in your Developer Namespace within the Tanzu Application Platform. Typically 
 the installation of the Database is done prior all other applicaiton components but its not an requirement. 
 
@@ -8,15 +13,11 @@ Installation Steps and Prerequisists:
 - Downlaod VMware SQL with Postgres for Kubernetes
 - Installal the Tanzu Postgres Operator
 
-## Installing a Tanzu Postgres Operator
+### Installing a Tanzu Postgres Operator
 The Newsletter Databaase is basing on the Tanhu PostreSQL for Kubernetes deployment and requores the PostgreSQL which can be download for the VMware software Repsitory
 [Installing a Tanzu Postgres Operator](https://docs.vmware.com/en/VMware-SQL-with-Postgres-for-Kubernetes/1.9/tanzu-postgres-k8s/GUID-install-operator.html)
 
-## Create a Developer Namespace
-Bevore you can install the Newletter Demo Applicaiotn you need to create a Developer Namespace. If not already done, please refer to the guide in the documentation 
-[Tanzu Aoolication Plarform - Create Developer Namespace](https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.5/tap/scst-store-developer-namespace-setup.html).
-
-## Add credentials to the Tanzu Registry
+### Add credentials to the Tanzu Registry
 The Tanzu SQL with Postgres for Kubernetes will be directly downloaded during the installation from the VMware Registry (registry.tanzu.vmware.com). An account can be created 
 here (Create your VMware Account](https://account.run.pivotal.io/z/uaa/sign-up). To allow Kubernetes to pull from the VMware Registry a secret needs to be created withing your
 developer Namespace.
@@ -28,7 +29,7 @@ $ kubectl -n newsletter create secret docker-registry regsecret \
           --docker-password=<VMWARE_REGISTRY_PASS> 
 ```
 
-## Deploying the PostgreSQL Database
+### Deploying the PostgreSQL Database
 Withing the config directory 
 
 ```
@@ -56,7 +57,7 @@ with the name of your namespace.
 $ kubectl -n newsletter create -f config/newsletter-db.yaml
 ```
 
-## Enable Service Binding for the PostgresSQL Database
+### Enable Service Binding for the PostgresSQL Database
 Binding application workloads to service instances is the most common use of services. The Newsletter Application will your a 'resource claims' defined in 
 the workload.yaml file that allows sn automatic connection of the PostgreSQL service instances with a service bindings that exchanges connection credentials as well. Read more about under 
 [Consume services on Tanzu Application Platform](https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.5/tap/getting-started-about-consuming-services.html)
@@ -79,7 +80,7 @@ Install the Service Instance Class with the following command:
 $ kubectl -n newsletter create -f config/postgres-class.yaml
 ---
 
-## Install the Postgres Service Rolebinding
+### Install the Postgres Service Rolebinding
 The postgres-service-binding Rolebinding is only required if the database is deployed in another Kubernetes Namespace than the newletter 
 applicaiton. 
 ```
@@ -98,7 +99,7 @@ rules:
   verbs: ["get", "list", "watch"]
 ```
 
-## Enable Service Binding for the PostgresSQL Database
+### Enable Service Binding for the PostgresSQL Database
 Binding application workloads to service instances is the most common use of services. The Newsletter Application will your a 'resource claims' defined in 
 the workload.yaml file that allows sn automatic connection of the PostgreSQL service instances with a service bindings that exchanges connection credentials as well. Read more about under 
 [Consume services on Tanzu Application Platform](https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.5/tap/getting-started-about-consuming-services.html)
@@ -121,7 +122,7 @@ Install the Service Instance Class with the following command:
 $ kubectl -n newsletter create -f config/postgres-class.yaml
 ---
 
-## Install the Postgres Service Rolebinding
+### Install the Postgres Service Rolebinding
 The postgres-service-binding Rolebinding is only required if the database is deployed in another Kubernetes Namespace than the newletter 
 applicaiton. 
 ```
@@ -140,7 +141,7 @@ rules:
   verbs: ["get", "list", "watch"]
 ```
 
-## Verify the database Deployment
+### Verify the database Deployment
 If the deployment is successful, the database instance newsetter-db-0 and newsletter-db-monitor-0 should be available and running. 
 ```
 $ kubectl -n newsletter get pods
@@ -149,7 +150,7 @@ newsletter-db-0                                             5/5     Running     
 newsletter-db-monitor-0                                     4/4     Running     0          24h
 ```
 
-## Deboug the database deployments
+### Deboug the database deployments
 In case of a problem, the commands shown below should help identifing the issue. 
 ```
 # --- SHOW NAMESPACE RELEATED EVENTS ---
@@ -163,7 +164,7 @@ $ kubectl -n newsletter logs newsletter-db-0 -c postgres-metrics-exporter
 $ kubectl -n newsletter logs newsletter-db-0 -c  postgres-sidecar
 ```
 
-## Accessing to the Database 
+### Accessing to the Database 
 The PostgreSQL can be accessed from from withing the docker container. This is only usefil for debuggin reasons and may not be 
 available in production environment because of lack of permussions.
 ```
