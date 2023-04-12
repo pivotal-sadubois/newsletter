@@ -1,4 +1,4 @@
-# rmq-class.yaml
+# postgres-class.yaml
 ---
 apiVersion: services.apps.tanzu.vmware.com/v1alpha1
 kind: ClusterInstanceClass
