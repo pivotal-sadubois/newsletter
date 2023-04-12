@@ -97,3 +97,71 @@ rules:
   verbs: ["get", "list", "watch"]
 ```
 
+## Verify the database Deployment
+If the deployment is successful, the database instance newsetter-db-0 and newsletter-db-monitor-0 should be available and running. 
+```
+$ kubectl -n newsletter get pods
+NAME                                                        READY   STATUS      RESTARTS   AGE
+newsletter-db-0                                             5/5     Running     0          24h
+newsletter-db-monitor-0                                     4/4     Running     0          24h
+```
+
+## Deboug the database deployments
+In case of a problem, the commands shown below should help identifing the issue. 
+```
+# --- SHOW NAMESPACE RELEATED EVENTS ---
+$ kubectl -n newletter get events
+
+# --- SHOW THE CONTAINER LOGS ---
+$ kubectl -n newsletter logs newsletter-db-0 -c instance-logging
+$ kubectl -n newsletter logs newsletter-db-0 -c [pg-container
+$ kubectl -n newsletter logs newsletter-db-0 -c reconfigure-instance
+$ kubectl -n newsletter logs newsletter-db-0 -c postgres-metrics-exporter
+$ kubectl -n newsletter logs newsletter-db-0 -c  postgres-sidecar
+```
+
+## Accessing to the Database 
+The PostgreSQL can be accessed from from withing the docker container. This is only usefil for debuggin reasons and may not be 
+available in production environment because of lack of permussions.
+```
+$ kubectl -n newsletter exec -it newsletter-db-0 -- bash
+Defaulted container "pg-container" out of: pg-container, instance-logging, reconfigure-instance, postgres-metrics-exporter, postgres-sidecar
+postgres@newsletter-db-0:/$ 
+```
+Now you are inside the PosrgreSQL docker container and can connect to the database as root. Additionally as the psql utility is available 
+in the container as well, you dont need to install it seperatly. Now the connedt to the database instance:
+```
+postgres@newsletter-db-0:/$ psql -h localhost -p 5432
+psql (15.1 (VMware Postgres 15.1.0))
+SSL connection (protocol: TLSv1.3, cipher: TLS_AES_256_GCM_SHA384, compression: off)
+Type "help" for help.
+
+postgres=# \l
+                                                                         List of databases
+     Name      |           Owner           | Encoding | Collate |  Ctype  | ICU Locale | Locale Provider |                    Access privileges                    
+---------------+---------------------------+----------+---------+---------+------------+-----------------+---------------------------------------------------------
+ newsletter-db | pgautofailover_replicator | UTF8     | C.UTF-8 | C.UTF-8 |            | libc            | pgautofailover_replicator=CTc/pgautofailover_replicator+
+               |                           |          |         |         |            |                 | postgres_exporter=c/pgautofailover_replicator          +
+               |                           |          |         |         |            |                 | pgappuser=CTc/pgautofailover_replicator                +
+               |                           |          |         |         |            |                 | pgrouser=c/pgautofailover_replicator                   +
+               |                           |          |         |         |            |                 | pgrwuser=c/pgautofailover_replicator
+ postgres      | postgres                  | UTF8     | C.UTF-8 | C.UTF-8 |            | libc            | postgres=CTc/postgres                                  +
+               |                           |          |         |         |            |                 | pgautofailover_monitor=c/postgres                      +
+               |                           |          |         |         |            |                 | postgres_exporter=c/postgres
+ template0     | postgres                  | UTF8     | C.UTF-8 | C.UTF-8 |            | libc            | =c/postgres                                            +
+               |                           |          |         |         |            |                 | postgres=CTc/postgres
+ template1     | postgres                  | UTF8     | C.UTF-8 | C.UTF-8 |            | libc            | =c/postgres                                            +
+               |                           |          |         |         |            |                 | postgres=CTc/postgres
+(4 rows)
+```
+Now change to the Database 'newsletter-db' and show if there a are any tables configured.
+```
+postgres=# \c newsletter-db
+SSL connection (protocol: TLSv1.3, cipher: TLS_AES_256_GCM_SHA384, compression: off)
+You are now connected to database "newsletter-db" as user "postgres".
+```
+postgres=# \dt
+Did not find any relations.
+```
+This makes sense a we dont have installed the rest of the newsletter applicaiton components yet. Repeat that procedure again as newsletter-subscription service has been
+installed and initialised.
