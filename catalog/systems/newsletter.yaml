@@ -4,6 +4,9 @@ kind: System
 metadata:
   name: newsletter
   description: Newsletter Service Application
+  annotations:
+    "backstage.io/kubernetes-label-selector": "app.kubernetes.io/part-of=newsletter"
+    'backstage.io/techdocs-ref': dir:.
 spec:
   owner: newsletter-team
   domain: ecommerce-marketplace
