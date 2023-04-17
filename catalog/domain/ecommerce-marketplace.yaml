@@ -1,8 +1,8 @@
 apiVersion: backstage.io/v1alpha1
 kind: Domain
 metadata:
-  name: newsletter
-  description: Newsletter Application Demo
+  name: ecommerce-marketplace
+  description: eCommerce Marketplace
   annotations:
     "backstage.io/kubernetes-label-selector": "app.kubernetes.io/part-of=newsletter"
     'backstage.io/techdocs-ref': dir:.
@@ -13,4 +13,4 @@ metadata:
 #       title: Cloud Apps Dashboard
 #       icon: dashboard
 spec:
-  owner: newsletter-team
+  owner: marketplace-team

@@ -2,8 +2,6 @@ site_name: 'Guestbook Component Docs'
 
 nav:
   - Overview Component: docs/component/newsletter-ui.md
-  - Overview Component: docs/component/newsletter-db.md
-  - Overview Component: docs/component/newsletter-subscription.md
 
 plugins:
   - techdocs-core

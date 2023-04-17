@@ -7,13 +7,11 @@ metadata:
     'backstage.io/techdocs-ref': dir:.
 spec:
   targets:
-    - ./resources/newsletter-database/newsletter-database.yaml
-    - ./groups/newsletter-team.yaml
-    - ./components/newsletter-db/newsletter-db.yaml
-    - ./components/newsletter-subscription/newsletter-subscription.yaml
-    - ./components/newsletter-ui/newsletter-ui.yaml
-#   - ./api/newsletter-subscription.yaml
-    - ./system/newsleter-subscription.yaml
-    - ./system/newsleter-ui.yaml
-    - ./system/newsleter-db.yaml
-    - ./domain/newsletter.yaml
+    - resources/newsletter-database/newsletter-database.yaml
+    - groups/newsletter-team.yaml
+    - components/newsletter-db/newsletter-db.yaml
+    - components/newsletter-subscription/newsletter-subscription.yaml
+    - components/newsletter-ui/newsletter-ui.yaml
+#   - api/newsletter-subscription.yaml
+    - systems/newsleter.yaml 
+    - domain/ecommerce-marketplace.yaml

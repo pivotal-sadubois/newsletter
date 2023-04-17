@@ -14,7 +14,7 @@ spec:
   type: service
   lifecycle: experimental
   owner: newsletter-team
-  system: newsletter-db
-  domain: newsletter
+  system: newsletter
+  domain: ecommerce-marketplace
   providesApis:
     - blockchain-api-contour.e2e.corby.cc
