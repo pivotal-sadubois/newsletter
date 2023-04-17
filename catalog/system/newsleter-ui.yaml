@@ -1,0 +1,11 @@
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: newsleter-ui
+  description: Newsletter User Interface
+  annotations:
+    "backstage.io/kubernetes-label-selector": "app.kubernetes.io/part-of=newsletter"
+    'backstage.io/techdocs-ref': dir:.
+spec:
+  owner: newsletter-team
+  domain: newsletter
