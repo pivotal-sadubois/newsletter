@@ -1,7 +1,8 @@
 site_name: 'Guestbook Component components/user-profile-backend'
 
 nav:
-  - Overview Component: index.md
+  - Overview Component1: index.md
+  - Overview Component2: docs/index.md
 
 plugins:
   - techdocs-core
