@@ -14,8 +14,8 @@ spec:
   type: openapi
   lifecycle: experimental
   owner: newsletter-team
-  system: newsletter-subscription
-  domain: newsletter
+  system: newsletter
+  domain: ecommerce-marketplace
   definition: |
     components:
       schemas:
