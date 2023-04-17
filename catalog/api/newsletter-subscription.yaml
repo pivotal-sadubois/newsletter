@@ -19,17 +19,6 @@ spec:
   definition: |
     components:
       schemas:
-        ErrorResponse:
-          properties:
-            type: 
-              type: string
-            title: 
-              type: string
-            detail: 
-              type: string
-            instane: 
-              type: string
-          type: object
         Subscription:
           properties:
             emailId:
@@ -42,55 +31,36 @@ spec:
             lastName:
               type: string
           type: object
-          required:
-          - firstName
-          - lastName
-          - emailId
-          example:
-            firstName: Hans
-            lastName: Muster
-            emailId: hans.muster@gmail.com
     info:
-      title: Subscription Management API
+      title: Newsletter Application - Subscription Profile Management (Rest CRUD API)
       version: "1.0"
     openapi: 3.0.1
     paths:
       /api/v1/subscription:
-        get:
-          operationId: getAllSubscription
-          responses:
-            "200":
-              content:
-                '*/*':
-                  schema:
-                    items:
-                      $ref: '#/components/schemas/Subscription'
-                    type: array
-              description: Customer profile retrieved successfully.
-            "404":
-              content:
-                'application/json':
-                  schema:
-                    $ref: '#/components/schemas/Subscription'
-              description: Customer profile not found.
-          summary: Get all registered nesletter subscription profiles.
-          tags:
-          - Subscription Profiles CRUD
         post:
-          operationId: createSubscription
-          requestBody:
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/Subscription'
+          operationId: createSubscription_1
+          parameters:
+          - in: query
+            name: subscription
             required: true
+            schema:
+              $ref: '#/components/schemas/Subscription'
           responses:
             "201":
               content:
-                'application/json':
+                application/json:
+                  examples:
+                    createSubscription:
+                      description: Retrieves a User's attributes.
+                      summary: Add subscription profile
+                      value:
+                      - emailId: bob@example.com
+                        firstName: Bob
+                        id: "1"
+                        lastName: Melone
                   schema:
                     $ref: '#/components/schemas/Subscription'
-              description: Customer profile successfully saved.
+              description: User's subscription profile successfully saved.
               headers:
                 email_id:
                   description: Email address of the user requesting a newsletter subscriptions.
@@ -107,43 +77,81 @@ spec:
                     to identify a record.
                   required: true
                   schema:
-                    type: string
+                    type: integer
                   style: simple
                 last_name:
                   description: Last Name of the user requesting a newsletter subscriptions.
                   schema:
                     type: string
                   style: simple
-            "400":
+            "404":
               content:
-                'application/json':
+                application/json:
+                  example:
+                    error: Conflict
+                    path: /api/v1/subscription
+                    status: "404"
+                    timestamp: "2023-04-13T19:42:38.918+00:00"
                   schema:
-                    $ref: '#/components/schemas/ErrorResponse'
-              description: Passed customer profile is invalid.
-          summary: Saves provided customer profile.
+                    $ref: '#/components/schemas/Subscription'
+              description: Passed Email address is already registerd.
+            "408":
+              content:
+                application/json:
+                  example:
+                    error: Bad Request
+                    path: /api/v1/subscription
+                    status: "404"
+                    timestamp: "2023-04-13T19:42:38.918+00:00"
+                  schema:
+                    $ref: '#/components/schemas/Subscription'
+              description: Bad formated request.
+          summary: Saves a provided subscription profiles.
           tags:
-          - Customer Profile CRUD
+          - Subscription Profiles
       /api/v1/subscription/{id}:
         delete:
           operationId: deleteSubscription
           parameters:
-          - in: path
+          - description: 'The name that needs to be fetched. Use user1 for testing. '
+            in: path
             name: id
             required: true
             schema:
               format: int64
               type: integer
           responses:
-            "200":
+            "201":
               content:
-                'application/json':
+                application/json:
+                  examples:
+                    getUserAttribute:
+                      description: Delete a user's subscription profile with the provided
+                        subscription id.
+                      summary: Delete a subscription profile.
+                      value:
+                        deleted: "true"
                   schema:
-                    additionalProperties:
-                      type: boolean
-                    type: object
-              description: OK
+                    $ref: '#/components/schemas/Subscription'
+              description: Ssubscription profile successfully deleted.
+            "404":
+              content:
+                application/json:
+                  examples:
+                    getAllSubscription:
+                      description: Retrieves a User's attributes.
+                      summary: Retrieves all user subscription registered.
+                      value:
+                        error: Conflict
+                        path: /api/v1/subscription
+                        status: "404"
+                        timestamp: "2023-04-13T19:42:38.918+00:00"
+                  schema:
+                    $ref: '#/components/schemas/Subscription'
+              description: Subscription profile not found.
+          summary: Delete a subscription profile
           tags:
-          - subscription-controller
+          - Subscription Profiles
         get:
           operationId: getSubscriptionById
           parameters:
@@ -154,14 +162,44 @@ spec:
               format: int64
               type: integer
           responses:
-            "200":
+            "302":
               content:
-                '*/*':
+                application/json:
                   schema:
                     $ref: '#/components/schemas/Subscription'
-              description: OK
+              description: User's subscription profile succesfound by its Id.
+              headers:
+                email_id:
+                  description: Email address of the user requesting a newsletter subscriptions.
+                  schema:
+                    type: string
+                  style: simple
+                first_name:
+                  description: First Name of the user requesting a newsletter subscriptions
+                  schema:
+                    type: string
+                  style: simple
+                id:
+                  description: A ascending uniq Id beginning from 1. This Id can be used
+                    to identify a record.
+                  required: true
+                  schema:
+                    type: integer
+                  style: simple
+                last_name:
+                  description: Last Name of the user requesting a newsletter subscriptions.
+                  schema:
+                    type: string
+                  style: simple
+            "404":
+              content:
+                application/json:
+                  schema:
+                    type: string
+              description: Subscription with the provided id not found.
+          summary: Get a subscription profils by it's Id
           tags:
-          - subscription-controller
+          - Subscription Profiles
         put:
           operationId: updateSubscription
           parameters:
@@ -178,15 +216,181 @@ spec:
                   $ref: '#/components/schemas/Subscription'
             required: true
           responses:
-            "200":
+            "302":
               content:
-                'application/json':
+                application/json:
                   schema:
                     $ref: '#/components/schemas/Subscription'
-              description: OK
+              description: User's subscription profile succesfound by its Id.
+              headers:
+                email_id:
+                  description: Email address of the user requesting a newsletter subscriptions.
+                  schema:
+                    type: string
+                  style: simple
+                first_name:
+                  description: First Name of the user requesting a newsletter subscriptions
+                  schema:
+                    type: string
+                  style: simple
+                id:
+                  description: A ascending uniq Id beginning from 1. This Id can be used
+                    to identify a record.
+                  required: true
+                  schema:
+                    type: integer
+                  style: simple
+                last_name:
+                  description: Last Name of the user requesting a newsletter subscriptions.
+                  schema:
+                    type: string
+                  style: simple
+            "404":
+              content:
+                application/json:
+                  example:
+                    error: Conflict
+                    path: /api/v1/subscription
+                    status: "404"
+                    timestamp: "2023-04-13T19:42:38.918+00:00"
+                  schema:
+                    $ref: '#/components/schemas/Subscription'
+              description: ubscription with the provided id not found.
+          summary: Update provided user subscription profiles.
           tags:
-          - subscription-controller
+          - Subscription Profiles
+      /api/v1/subscriptions:
+        get:
+          operationId: getAllSubscription
+          responses:
+            "200":
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/Subscription'
+              description: Subscription profiles retrieved successfully.
+              headers:
+                email_id:
+                  description: Email address of the user requesting a newsletter subscriptions.
+                  schema:
+                    type: string
+                  style: simple
+                first_name:
+                  description: First Name of the user requesting a newsletter subscriptions
+                  schema:
+                    type: string
+                  style: simple
+                id:
+                  description: A ascending uniq Id beginning from 1. This Id can be used
+                    to identify a record.
+                  required: true
+                  schema:
+                    type: integer
+                  style: simple
+                last_name:
+                  description: Last Name of the user requesting a newsletter subscriptions.
+                  schema:
+                    type: string
+                  style: simple
+            "404":
+              content:
+                application/json:
+                  example:
+                    error: Not Found
+                    path: /api/v1/subscription
+                    status: "404"
+                    timestamp: "2023-04-13T19:42:38.918+00:00"
+                  schema:
+                    $ref: '#/components/schemas/Subscription'
+              description: No ubscription profiles found.
+          summary: Get all subscription profiles registered.
+          tags:
+          - Array of Subscription Profiles
+        post:
+          operationId: createSubscription
+          requestBody:
+            content:
+              application/json:
+                schema:
+                  items:
+                    $ref: '#/components/schemas/Subscription'
+                  type: array
+            required: true
+          responses:
+            "201":
+              content:
+                application/json:
+                  examples:
+                    createSubscription:
+                      description: RSubmitts a Newsletter subscription profils.
+                      summary: Add subscription profile.
+                      value: '[[{ "id":"1", "emailId":"bob@example.com", "firstName":"Bob",
+                        "lastName":"Melone"}]'
+                    createSubscriptionArray:
+                      description: Submitts an array of Newsletter subscription profiles.
+                      summary: Add array of subscription profiles.
+                      value:
+                      - emailId: bob@example.com
+                        firstName: Bob
+                        id: "1"
+                        lastName: Melone
+                      - emailId: bob@example.com
+                        firstName: Bob
+                        id: "2"
+                        lastName: Melone
+                  schema:
+                    $ref: '#/components/schemas/Subscription'
+              description: User's subscription profile successfully saved.
+              headers:
+                email_id:
+                  description: Email address of the user requesting a newsletter subscriptions.
+                  schema:
+                    type: string
+                  style: simple
+                first_name:
+                  description: First Name of the user requesting a newsletter subscriptions
+                  schema:
+                    type: string
+                  style: simple
+                id:
+                  description: A ascending uniq Id beginning from 1. This Id can be used
+                    to identify a record.
+                  required: true
+                  schema:
+                    type: integer
+                  style: simple
+                last_name:
+                  description: Last Name of the user requesting a newsletter subscriptions.
+                  schema:
+                    type: string
+                  style: simple
+            "404":
+              content:
+                application/json:
+                  example:
+                    error: Conflict
+                    path: /api/v1/subscription
+                    status: "404"
+                    timestamp: "2023-04-13T19:42:38.918+00:00"
+                  schema:
+                    $ref: '#/components/schemas/Subscription'
+              description: Passed Email address is already registerd.
+            "408":
+              content:
+                application/json:
+                  example:
+                    error: Bad Request
+                    path: /api/v1/subscription
+                    status: "404"
+                    timestamp: "2023-04-13T19:42:38.918+00:00"
+                  schema:
+                    $ref: '#/components/schemas/Subscription'
+              description: Bad formated request.
+          summary: Saves a provided array of subscription profiles.
+          tags:
+          - Array of Subscription Profiles
     servers:
     - url: https://newsletter-subscription.apps-contour.vsptap.pcfsdu.com
     tags:
-    - name: Subscription Management REST API
+    - name: Subscription REST API
+    
