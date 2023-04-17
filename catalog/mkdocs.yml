@@ -5,6 +5,8 @@ nav:
   - Developer Environment: developer_env.md
   - Deploy on local Workstation: deploy_local.md
   - Deploy on Kubernetes with Tanzu Application Platform (TAP): deploy_tap.md
+  - Component newsletter-ui: component/newsletter-ui.md
+  - Domain: domain/ecommerce-marketplace.md
 
 plugins:
   - techdocs-core
