@@ -12,6 +12,6 @@ spec:
     - components/newsletter-db/newsletter-db.yaml
     - components/newsletter-subscription/newsletter-subscription.yaml
     - components/newsletter-ui/newsletter-ui.yaml
-#   - api/newsletter-subscription.yaml
     - systems/newsleter.yaml 
     - domain/ecommerce-marketplace.yaml
+#   - api/newsletter-subscription.yaml
