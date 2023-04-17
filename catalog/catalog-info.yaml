@@ -11,6 +11,8 @@ spec:
     - ./groups/newsletter-team.yaml
     - ./components/newsletter-db/newsletter-db.yaml
     - ./components/newsletter-subscription/newsletter-subscription.yaml
+    - ./components/newsletter-ui/newsletter-ui.yaml
+    - ./api/newsletter-subscription/newsletter-subscription.yaml
     - ./systems/newsleter-subscription.yaml
     - ./systems/newsleter-ui.yaml
     - ./systems/newsleter-db.yaml
