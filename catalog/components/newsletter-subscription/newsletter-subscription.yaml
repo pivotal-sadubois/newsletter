@@ -3,7 +3,7 @@ kind: Component
 metadata:
   name: newsletter-subscription
   annotations:
-    backstage.io/kubernetes-label-selector': 'app=newsletter-subscription,tier=newsletter'
+    "backstage.io/kubernetes-label-selector": "app.kubernetes.io/part-of=newsletter"
     'backstage.io/techdocs-ref': dir:.
   links:
     - url: "https://vmware.wavefront.com/u/gdq77TV7mG?t=map-sales-sandbox"
