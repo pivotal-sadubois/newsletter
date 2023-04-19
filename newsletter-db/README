@@ -1,0 +1,11 @@
+
+
+
+
+kubectl -n newsletter create -f config/newsletter-db.yaml
+kubectl -n newsletter wait --for=condition=ready pod -l app=postgres
+
+kubectl -n newsletter label --overwrite pod newsletter-db-0 app.kubernetes.io/part-of=newsletter 
+kubectl -n newsletter label --overwrite pod newsletter-db-monitor-0 app.kubernetes.io/part-of=newsletter 
+
+

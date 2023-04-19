@@ -1,6 +1,6 @@
-# Local deployment
+# Newsletter Application - Local deployment
 
-See [deploy newletter-db](../newsletter-db/README.md)
+See [deploy newletter-db](../newsletter-db/deploy_local.md)
 
 ```
 ./mvnw clean compile
@@ -50,4 +50,14 @@ $ curl -X GET -H 'Content-Type: application/json' http://localhost:8080/api/v1/s
 ]
 ```
 
+
+```
+### Get API Documentation
+$ curl -X GET -H 'Content-Type: application/json' http://localhost:8080/v3/api-docs | jq -r
+```
+
+```
+### Get Actuators
+$ curl -X GET -H 'Content-Type: application/json' http://localhost:8080/actuator | jq -r
+```
 

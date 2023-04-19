@@ -1,7 +1,7 @@
-site_name: 'Guestbook System Docs'
+site_name: 'Guestbook Domain Docs'
 
 nav:
-  - Overview Systems: index.md
+  - Overview Domain: newsletter.md
 
 plugins:
   - techdocs-core

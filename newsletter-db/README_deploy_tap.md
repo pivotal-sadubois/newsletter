@@ -74,9 +74,9 @@ spec:
     kind: Postgres
 ```
 Install the Service Instance Class with the following command: 
----
+```
 $ kubectl -n newsletter create -f config/postgres-class.yaml
----
+```
 
 ## Install the Postgres Service Rolebinding
 The postgres-service-binding Rolebinding is only required if the database is deployed in another Kubernetes Namespace than the newletter 

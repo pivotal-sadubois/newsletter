@@ -141,6 +141,15 @@ rules:
   verbs: ["get", "list", "watch"]
 ```
 
+### Set the backstage 'part-of' label
+In order for backstage techdocs and the TAP application live view to finde the database pods, a kubernetes label 'part-of' needs
+to be added to the pods.
+```
+$ kubectl -n newsletter label pod newsletter-db-0 app.kubernetes.io/part-of=newsletter                                         
+pod/newsletter-db-0 labeled
+$ kubectl -n newsletter label pod newsletter-db-monitor-0 app.kubernetes.io/part-of=newsletter
+pod/newsletter-db-monitor-0 labeled
+```
 ### Verify the database Deployment
 If the deployment is successful, the database instance newsetter-db-0 and newsletter-db-monitor-0 should be available and running. 
 ```
@@ -209,4 +218,49 @@ Did not find any relations.
 ```
 This makes sense a we dont have installed the rest of the newsletter applicaiton components yet. Repeat that procedure again as newsletter-subscription service has been
 installed and initialised.
+
+## Newsletter Subscription Service (newsletter-subscription) - Deploy on Tanuu Application Platform (TAP)
+The Newsletter Subscription Service can be deployed from a local copy of the Newsleter Git repository directly from your Workstation/Laptop (Developer Inner Loop) or it 
+can be deployed directly from a Git repository.
+
+This document describes the procedure how to deploy the Newsleter Database in your Developer Namespace within the Tanzu Application Platform. Typically
+the installation of the Database is done prior all other applicaiton components but its not an requirement.
+
+Installation Steps and Prerequisists:
+- Accesss to the VMware Software Repository (https://network.pivotal.io/)
+- Downlaod VMware SQL with Postgres for Kubernetes
+- Installal the Tanzu Postgres Operator
+
+Deployment Methodes:
+- Deployment from a local Git repository (Inner Loop)
+- Deployment from a Git repository (DevOps Outer Loop)
+
+In order to interact with TAP the following preeequisits need to be installed and configured. Pleaes follow the instructinos provied in the Tanzu Application Platform (TAP) documentation
+[installing Tanzu CLI](https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.3/tap/GUID-install-tanzu-cli.html)
+
+```
+```
+
+### TAP Inner Loop Deployment (Developer)
+The inner loop consists of local coding, building, running, and testing the application—all activities that you, as a developer, can control. In the past the Inner Lopp was performed
+directly on the developers workstage/laptop that inclide manual compiling, container creation and deployment. With TAP we deploy to a developer environment running on Kubernetes where 
+other teams API's can be accessed as well as backend databases required for testing.
+
+
+### TAP Outer Loop Deployment (Operations)
+The outer loop consists of the larger team processes that your code flows through on its way to the cluster: code reviews, integration tests, security and compliance, and so on.
+
+
+tanzu apps workload delete newsletter-subscription --namespace newsletter --yes 
+
+
+
+
+ Create Developer Namespace](https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.5/tap/scst-store-developer-namespace-setup.html).
+
+
+
+
+
+
 

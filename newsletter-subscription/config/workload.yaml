@@ -1,0 +1,44 @@
+
+apiVersion: carto.run/v1alpha1
+kind: Workload
+metadata:
+  name: newsletter-subscription
+  labels:
+    apps.tanzu.vmware.com/workload-type: web
+    app.kubernetes.io/part-of: newsletter
+    apps.tanzu.vmware.com/has-tests: "true"
+    apis.apps.tanzu.vmware.com/register-api: "true"
+  annotations:
+    autoscaling.knative.dev/minScale: "1"
+spec:
+  serviceClaims:
+    - name: db
+      ref:
+        apiVersion: sql.tanzu.vmware.com/v1
+        kind: Postgres
+        name: newsletter-db
+  build:
+    env:
+      - name: BP_JVM_VERSION
+        value: "19"
+  params:
+    - name: annotations
+      value:
+        autoscaling.knative.dev/minScale: "1"
+    - name: api_descriptor
+      value:
+        type: openapi
+        location: 
+          path: "/v3/api-docs"
+        owner: newsletter-team
+        system: newsletter-subscription
+        description: Newsletter Subscription Management REST API Service 
+  source:
+    git:
+      ref:
+        branch: main
+      url: https://github.com/pivotal-sadubois/newsletter
+
+
+      # tanzu apps workload -n newsletter tail newsletter-subscription --timestamp --since 1h
+      # tanzu apps workload get newsletter-subscription
