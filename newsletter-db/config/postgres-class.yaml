@@ -3,10 +3,10 @@
 apiVersion: services.apps.tanzu.vmware.com/v1alpha1
 kind: ClusterInstanceClass
 metadata:
-  name: user-profile-database
+  name: newsletter-db
 spec:
   description:
-    short: It's a PostgreSQL Database
+    short: PostgreSQL Database for Newletter Application
   pool:
     group: sql.tanzu.vmware.com
     kind: Postgres
