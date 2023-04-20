@@ -4,6 +4,13 @@
 Bevore you can install the Newletter Demo Applicaiotn you need to create a Developer Namespace. If not already done, please refer to the guide in the documentation 
 [Tanzu Aoolication Plarform - Create Developer Namespace](https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.5/tap/scst-store-developer-namespace-setup.html).
 
+```
+$ export TAP_DEVELOPER_NAMESPACE=<namespace-nae>
+$ kubectl create ns $TAP_DEVELOPER_NAMESPACE
+$ kubectl label namespaces $TAP_DEVELOPER_NAMESPACE apps.tanzu.vmware.com/tap-ns=""
+```
+
+
 ## Newsletter Databaase (newsletter-db) - Deploy on Tanuu Application Platform (TAP) 
 This document describes the procedure how to deploy the Newsleter Database in your Developer Namespace within the Tanzu Application Platform. Typically 
 the installation of the Database is done prior all other applicaiton components but its not an requirement. 
@@ -54,7 +61,14 @@ spec:
 The database can be deployed with the command shown below. If your developer namespace has a different name, then reployce '-n newsletter' 
 with the name of your namespace.
 ```
-$ kubectl -n newsletter create -f config/newsletter-db.yaml
+$ export TAP_DEVELOPER_NAMESPACE=<namespace-nae>
+$ kubectl -n $TAP_DEVELOPER_NAMESPACE create -f config/newsletter-db.yaml
+```
+Now, write a kubernetes label for Backstage to find the releated container in the searches.
+```
+$ export TAP_DEVELOPER_NAMESPACE=<namespace-nae>
+kubectl -n $TAP_DEVELOPER_NAMESPACE label --overwrite pod newsletter-db-0 app.kubernetes.io/part-of=newsletter
+kubectl -n $TAP_DEVELOPER_NAMESPACE label --overwrite pod newsletter-db-monitor-0 app.kubernetes.io/part-of=newsletter
 ```
 
 ### Enable Service Binding for the PostgresSQL Database
