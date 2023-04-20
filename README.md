@@ -46,7 +46,7 @@ on the applicaiotn needs.
 
 ### Deployment Options
 - [Deploy on the local Laptop/Workstation](catalog/docs/deploy_local.md)
-- [Deployment on Tanzu Applicaiton Platform (TAP)](catalog/docs/deploy_local.md)
+- [Deployment on Tanzu Applicaiton Platform (TAP)](catalog/docs/deploy_tap.md)
 
 See [Local Deployment](catalog//docs/deploy_local.md)
 
