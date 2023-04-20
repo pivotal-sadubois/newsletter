@@ -74,6 +74,7 @@ The Tanzu SQL with Postgres for Kubernetes will be directly downloaded during th
 here (Create your VMware Account](https://account.run.pivotal.io/z/uaa/sign-up). To allow Kubernetes to pull from the VMware Registry a secret needs to be created withing your
 developer Namespace.
 
+NOTICE: This step can be ignored if the developer namespace has been created with (tap-create-developer-namespace.sh)
 ```
 $ kubectl -n newsletter create secret docker-registry regsecret \
           --docker-server=https://registry.tanzu.vmware.com/ \
