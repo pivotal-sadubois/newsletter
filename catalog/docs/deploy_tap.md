@@ -13,7 +13,7 @@ Within the Tanzu Demo Hub environment (THD) a harbor registry has already been c
 can be used. The secret will be created automatically with the corect credentials.
 ```
 $ cd tanzu-demo-hub/scripts
-$ tap-create-developer-namespace.sh <namespace-name>
+$ ./tap-create-developer-namespace.sh <namespace-name>
 namespace created
 namespace labeled
 NAME                                 TYPE                                  DATA   AGE
