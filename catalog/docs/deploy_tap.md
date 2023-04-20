@@ -10,7 +10,7 @@ Developer Namespace Configuration:
 
 ### Create TAP Developer Namespace in the Tanzu Demo Hub (TDH) Environment
 Within the Tanzu Demo Hub environment (THD) a harbor registry has already been configured for the Tanzu Build Service (TBS) which 
-can be used. The secret will be created automatically with the corect credentials.
+can be used. Additionally a dockerPullsecret will be configured as h2o environents on vSphere usually run into a docker rate linit.
 ```
 $ cd tanzu-demo-hub/scripts
 $ ./tap-create-developer-namespace.sh <namespace-name>
