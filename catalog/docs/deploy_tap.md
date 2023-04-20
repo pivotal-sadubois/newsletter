@@ -1,8 +1,45 @@
 # Deploy on Kubernetes with Tanzu Application Platform (TAP)
 
 ## Create a Developer Namespace
-Bevore you can install the Newletter Demo Applicaiotn you need to create a Developer Namespace. If not already done, please refer to the guide in the documentation 
-[Tanzu Aoolication Plarform - Create Developer Namespace](https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.5/tap/scst-store-developer-namespace-setup.html).
+Bevore you can install the Newletter Demo Applicaiotn you need to create a Developer Namespace. The procedure configures the following: 
+
+Developer Namespace Configuration:
+- Create a Namespace on the TAP Development Cluster
+- Add secrets for the container registry used by the Tanzu Build Service (TBS)
+- Label the namespace for the Namespace Provisioner Service in TAP
+
+### Create TAP Developer Namespace in the Tanzu Demo Hub (TDH) Environment
+Within the Tanzu Demo Hub environment (THD) a harbor registry has already been configured for the Tanzu Build Service (TBS) which 
+can be used. The secret will be created automatically with the corect credentials.
+```
+$ cd tanzu-demo-hub/scripts
+$ tap-create-developer-namespace.sh <namespace-name>
+namespace created
+namespace labeled
+NAME                                 TYPE                                  DATA   AGE
+secret/default-token-zc82w           kubernetes.io/service-account-token   3      74s
+secret/grype-scanner-token-7wg2r     kubernetes.io/service-account-token   3      54s
+secret/harbor-registry-credentials   kubernetes.io/dockerconfigjson        1      66s
+secret/registries-credentials        kubernetes.io/dockerconfigjson        1      61s
+secret/scanner-secret-ref            kubernetes.io/dockerconfigjson        1      54s
+secret/vmware-registry-credentials   kubernetes.io/dockerconfigjson        1      64s
+
+NAME                           SECRETS   AGE
+serviceaccount/default         2         75s
+serviceaccount/grype-scanner   4         55s
+
+NAME                                                               ROLE                      AGE
+rolebinding.rbac.authorization.k8s.io/default-permit-deliverable   ClusterRole/deliverable   62s
+rolebinding.rbac.authorization.k8s.io/default-permit-workload      ClusterRole/workload      62s
+
+NAME                         DATA   AGE
+configmap/kube-root-ca.crt   1      76s
+```
+
+### Create TAP Developer according to the Documentation
+To create a TAP Developer Namespace, please refer to the guide in the documentation and follow the procedure 
+[Provision developer namespaces](https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.5/tap/namespace-provisioner-provision-developer-ns.html). The following 
+steps are summarized gere: 
 
 ```
 $ export TAP_DEVELOPER_NAMESPACE=<namespace-nae>
@@ -10,6 +47,13 @@ $ kubectl create ns $TAP_DEVELOPER_NAMESPACE
 $ kubectl label namespaces $TAP_DEVELOPER_NAMESPACE apps.tanzu.vmware.com/tap-ns=""
 ```
 
+$ tanzu secret registry add harbor-registry-credentials \
+  --server $REGISTRY_SERVER \
+  --username "$REGISTRY_USERNAME" \
+  --password "$REGISTRY_PASSWORD" \
+  --namespace "$TAP_DEVELOPER_NAMESPACE" \
+  --verbose 0 >/dev/null 2>&1
+```
 
 ## Newsletter Databaase (newsletter-db) - Deploy on Tanuu Application Platform (TAP) 
 This document describes the procedure how to deploy the Newsleter Database in your Developer Namespace within the Tanzu Application Platform. Typically 
@@ -90,9 +134,10 @@ spec:
     kind: Postgres
 ```
 Install the Service Instance Class with the following command: 
----
-$ kubectl -n newsletter create -f config/postgres-class.yaml
----
+```
+$ export TAP_DEVELOPER_NAMESPACE=<namespace-nae>
+$ kubectl -n $TAP_DEVELOPER_NAMESPACE create -f config/postgres-class.yaml
+```
 
 ### Install the Postgres Service Rolebinding
 The postgres-service-binding Rolebinding is only required if the database is deployed in another Kubernetes Namespace than the newletter 
