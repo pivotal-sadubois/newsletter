@@ -46,8 +46,9 @@ $ export TAP_DEVELOPER_NAMESPACE=<namespace-nae>
 $ kubectl create ns $TAP_DEVELOPER_NAMESPACE
 $ kubectl label namespaces $TAP_DEVELOPER_NAMESPACE apps.tanzu.vmware.com/tap-ns=""
 ```
-
-$ tanzu secret registry add harbor-registry-credentials \
+Create Secrets for the TAP registry used for the Tanzu Build Service (TBS).
+```
+$ tanzu secret registry add tap-registry-credentials \
   --server $REGISTRY_SERVER \
   --username "$REGISTRY_USERNAME" \
   --password "$REGISTRY_PASSWORD" \
