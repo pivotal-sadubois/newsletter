@@ -54,7 +54,8 @@ The database tools such as https://www.pgadmin.org/
 
 ## PostgreSQL Web Administration (pgadmin)
 PGAdmin is a web-based Graphical User Interface (GUI) management application used to communicate with Postgres and derivative relational databases on both local and remote.
-Read more about pgadmin: (PGAdmin Web Site)[https://www.pgadmin.org].
+![PGAdmin Web Site](https://www.pgadmin.org).
+
 
 ## Login to the database with psql local or remotly
 Therefor the psql utility requires to be installe don your local computer. To verify the database you can connect ot it with psql like this: 
