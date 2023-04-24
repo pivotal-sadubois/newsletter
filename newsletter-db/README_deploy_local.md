@@ -50,7 +50,8 @@ CONTAINER ID   IMAGE                        COMMAND                  CREATED    
 ```
 
 # Accessing the database
-The database tools such as https://www.pgadmin.org/ 
+The database can be accessed and maintained with OSS tools such as PGAdmin over the web browser. Additionally its possible to acess ith by the commandline and the
+utility psql. The login credentials can be found in the docker-compose.yml configuration files. 
 
 ## PostgreSQL Web Administration (pgadmin)
 PGAdmin is a web-based Graphical User Interface (GUI) management application used to communicate with Postgres and derivative relational databases on both local and remote.
@@ -83,10 +84,9 @@ psql (14.7 (Debian 14.7-1.pgdg110+1))
 Type "help" for help.
 ```
 
-
-
-
-
+# Debugging the Database
+The docker container needs to be started first by the command: "docker-compose up -d".
+```
 subscription=# \l
                                List of databases
      Name     | Owner | Encoding |  Collate   |   Ctype    | Access privileges 
@@ -113,6 +113,14 @@ subscription=# select * from subscription;
 (1 row)
 
 ```
+
+
+
+
+
+
+
+
 
 
 
