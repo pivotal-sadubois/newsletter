@@ -49,27 +49,69 @@ CONTAINER ID   IMAGE                        COMMAND                  CREATED    
 7ee2317eba81   postgres:14                  "docker-entrypoint.s…"   3 seconds ago   Up 2 seconds   0.0.0.0:5432->5432/tcp   user-profile-database_postgres_1
 ```
 
-To verify the database you can connect ot it with psql like this: 
+# Accessing the database
+The database tools such as https://www.pgadmin.org/ 
 
+## PostgreSQL Web Administration (pgadmin)
+PGAdmin is a web-based Graphical User Interface (GUI) management application used to communicate with Postgres and derivative relational databases on both local and remote.
+Read more about pgadmin: (PGAdmin Web Site)[https://www.pgadmin.org].
+
+## Login to the database with psql local or remotly
+Therefor the psql utility requires to be installe don your local computer. To verify the database you can connect ot it with psql like this: 
 ```
 $ psql -h localhost -p 5432 -U user -d development    ## pssword: password
 psql (12.12 (Ubuntu 12.12-0ubuntu0.20.04.1), server 14.7 (Debian 14.7-1.pgdg110+1))
 WARNING: psql major version 12, server major version 14.
          Some psql features might not work.
 Type "help" for help.
+```
 
-development=# \l
-                              List of databases
-    Name     | Owner | Encoding |  Collate   |   Ctype    | Access privileges 
--------------+-------+----------+------------+------------+-------------------
- development | user  | UTF8     | en_US.utf8 | en_US.utf8 | 
- postgres    | user  | UTF8     | en_US.utf8 | en_US.utf8 | 
- template0   | user  | UTF8     | en_US.utf8 | en_US.utf8 | =c/user          +
-             |       |          |            |            | user=CTc/user
- template1   | user  | UTF8     | en_US.utf8 | en_US.utf8 | =c/user          +
-             |       |          |            |            | user=CTc/user
+## Login into the database docker container
+As the database runns as a docker container, its possible to login into the docker container and start
+psql from there. 
+
+```
+$ docker ps
+CONTAINER ID   IMAGE                        COMMAND                  CREATED          STATUS          PORTS                    NAMES
+9d4015fda615   postgres:14                  "docker-entrypoint.s…"   17 minutes ago   Up 17 minutes   0.0.0.0:5432->5432/tcp   newsletter-api_postgres_1
+```
+The container can be acessed with the following command:
+
+```
+$ docker exec -it $(docker ps -q  --filter ancestor=postgres:14) psql -d subscription -U user
+psql (14.7 (Debian 14.7-1.pgdg110+1))
+Type "help" for help.
+```
+
+
+
+
+
+subscription=# \l
+                               List of databases
+     Name     | Owner | Encoding |  Collate   |   Ctype    | Access privileges 
+--------------+-------+----------+------------+------------+-------------------
+ postgres     | user  | UTF8     | en_US.utf8 | en_US.utf8 | 
+ subscription | user  | UTF8     | en_US.utf8 | en_US.utf8 | 
+ template0    | user  | UTF8     | en_US.utf8 | en_US.utf8 | =c/user          +
+              |       |          |            |            | user=CTc/user
+ template1    | user  | UTF8     | en_US.utf8 | en_US.utf8 | =c/user          +
+              |       |          |            |            | user=CTc/user
 (4 rows)
-development=# \q
+```
+Try to insert values into the table.
+```
+subscription=# INSERT INTO subscription(id,first_name,last_name,email_id) VALUES (1, 'Tom', 'Bread', 'tom.bread@test.org');
+INSERT 0 1
+```
+Verify the insert.
+```
+subscription=# select * from subscription;
+ id | first_name | last_name |      email_id      
+----+------------+-----------+--------------------
+  1 | Tom        | Bread     | tom.bread@test.org
+(1 row)
+
 ```
 
 
