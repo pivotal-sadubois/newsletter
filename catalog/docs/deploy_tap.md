@@ -137,51 +137,8 @@ spec:
 ```
 Install the Service Instance Class with the following command: 
 ```
-$ export TAP_DEVELOPER_NAMESPACE=<namespace-nae>
-$ kubectl -n $TAP_DEVELOPER_NAMESPACE create -f config/postgres-class.yaml
-```
-
-### Install the Postgres Service Rolebinding
-The postgres-service-binding Rolebinding is only required if the database is deployed in another Kubernetes Namespace than the newletter 
-applicaiton. 
-```
-$ cat config/postgres-service-binding.yaml
-# postgres-service-binding.yaml
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: postgres-service-binding
-  labels:
-    servicebinding.io/controller: "true"
-rules:
-- apiGroups: ["sql.tanzu.vmware.com"]
-  resources: ["Postgres"]
-  verbs: ["get", "list", "watch"]
-```
-
-### Enable Service Binding for the PostgresSQL Database
-Binding application workloads to service instances is the most common use of services. The Newsletter Application will your a 'resource claims' defined in 
-the workload.yaml file that allows sn automatic connection of the PostgreSQL service instances with a service bindings that exchanges connection credentials as well. Read more about under 
-[Consume services on Tanzu Application Platform](https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.5/tap/getting-started-about-consuming-services.html)
-```
-$ cat config/postgres-class.yaml
----
-apiVersion: services.apps.tanzu.vmware.com/v1alpha1
-kind: ClusterInstanceClass
-metadata:
-  name: user-profile-database
-spec:
-  description:
-    short: It's a PostgreSQL Database
-  pool:
-    group: sql.tanzu.vmware.com
-    kind: Postgres
-```
-Install the Service Instance Class with the following command: 
----
 $ kubectl -n newsletter create -f config/postgres-class.yaml
----
+```
 
 ### Install the Postgres Service Rolebinding
 The postgres-service-binding Rolebinding is only required if the database is deployed in another Kubernetes Namespace than the newletter 
