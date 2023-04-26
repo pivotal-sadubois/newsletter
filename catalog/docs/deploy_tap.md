@@ -49,10 +49,10 @@ $ kubectl label namespaces $TAP_DEVELOPER_NAMESPACE apps.tanzu.vmware.com/tap-ns
 Create Secrets for the TAP registry used for the Tanzu Build Service (TBS).
 ```
 $ tanzu secret registry add tap-registry-credentials \
-  --server $REGISTRY_SERVER \
-  --username "$REGISTRY_USERNAME" \
-  --password "$REGISTRY_PASSWORD" \
-  --namespace "$TAP_DEVELOPER_NAMESPACE" \
+  --server <REGISTRY_SERVER> \
+  --username "<REGISTRY_USERNAME>" \
+  --password "<$REGISTRY_PASSWORD>" \
+  --namespace "<TAP_DEVELOPER_NAMESPACE>" \
   --verbose 0 >/dev/null 2>&1
 ```
 
@@ -76,7 +76,7 @@ developer Namespace.
 
 NOTICE: This step can be ignored if the developer namespace has been created with (tap-create-developer-namespace.sh)
 ```
-$ kubectl -n newsletter create secret docker-registry regsecret \
+$ kubectl -n <TAP_DEVELOPER_NAMESPACE> create secret docker-registry regsecret \
           --docker-server=https://registry.tanzu.vmware.com/ \
           --docker-username=<VMWARE_REGISTRY_USER> \
           --docker-password=<VMWARE_REGISTRY_PASS> 
@@ -107,14 +107,12 @@ spec:
 The database can be deployed with the command shown below. If your developer namespace has a different name, then reployce '-n newsletter' 
 with the name of your namespace.
 ```
-$ export TAP_DEVELOPER_NAMESPACE=<namespace-nae>
-$ kubectl -n $TAP_DEVELOPER_NAMESPACE create -f config/newsletter-db.yaml
+$ kubectl -n <TAP_DEVELOPER_NAMESPACE> create -f config/newsletter-db.yaml
 ```
 Now, write a kubernetes label for Backstage to find the releated container in the searches.
 ```
-$ export TAP_DEVELOPER_NAMESPACE=<namespace-nae>
-kubectl -n $TAP_DEVELOPER_NAMESPACE label --overwrite pod newsletter-db-0 app.kubernetes.io/part-of=newsletter
-kubectl -n $TAP_DEVELOPER_NAMESPACE label --overwrite pod newsletter-db-monitor-0 app.kubernetes.io/part-of=newsletter
+kubectl -n <TAP_DEVELOPER_NAMESPACE> label --overwrite pod newsletter-db-0 app.kubernetes.io/part-of=newsletter
+kubectl -n <TAP_DEVELOPER_NAMESPACE> label --overwrite pod newsletter-db-monitor-0 app.kubernetes.io/part-of=newsletter
 ```
 
 ### Enable Service Binding for the PostgresSQL Database
@@ -137,7 +135,7 @@ spec:
 ```
 Install the Service Instance Class with the following command: 
 ```
-$ kubectl -n newsletter create -f config/postgres-class.yaml
+$ kubectl -n <TAP_DEVELOPER_NAMESPACE> create -f config/postgres-class.yaml
 ```
 
 ### Install the Postgres Service Rolebinding
@@ -163,15 +161,15 @@ rules:
 In order for backstage techdocs and the TAP application live view to finde the database pods, a kubernetes label 'part-of' needs
 to be added to the pods.
 ```
-$ kubectl -n newsletter label pod newsletter-db-0 app.kubernetes.io/part-of=newsletter                                         
+$ kubectl -n <TAP_DEVELOPER_NAMESPACE> label pod newsletter-db-0 app.kubernetes.io/part-of=newsletter                                         
 pod/newsletter-db-0 labeled
-$ kubectl -n newsletter label pod newsletter-db-monitor-0 app.kubernetes.io/part-of=newsletter
+$ kubectl -n <TAP_DEVELOPER_NAMESPACE> label pod newsletter-db-monitor-0 app.kubernetes.io/part-of=newsletter
 pod/newsletter-db-monitor-0 labeled
 ```
 ### Verify the database Deployment
 If the deployment is successful, the database instance newsetter-db-0 and newsletter-db-monitor-0 should be available and running. 
 ```
-$ kubectl -n newsletter get pods
+$ kubectl -n <TAP_DEVELOPER_NAMESPACE> get pods
 NAME                                                        READY   STATUS      RESTARTS   AGE
 newsletter-db-0                                             5/5     Running     0          24h
 newsletter-db-monitor-0                                     4/4     Running     0          24h
@@ -181,14 +179,14 @@ newsletter-db-monitor-0                                     4/4     Running     
 In case of a problem, the commands shown below should help identifing the issue. 
 ```
 # --- SHOW NAMESPACE RELEATED EVENTS ---
-$ kubectl -n newletter get events
+$ kubectl -n <TAP_DEVELOPER_NAMESPACE> get events
 
 # --- SHOW THE CONTAINER LOGS ---
-$ kubectl -n newsletter logs newsletter-db-0 -c instance-logging
-$ kubectl -n newsletter logs newsletter-db-0 -c [pg-container
-$ kubectl -n newsletter logs newsletter-db-0 -c reconfigure-instance
-$ kubectl -n newsletter logs newsletter-db-0 -c postgres-metrics-exporter
-$ kubectl -n newsletter logs newsletter-db-0 -c  postgres-sidecar
+$ kubectl -n <TAP_DEVELOPER_NAMESPACE> logs newsletter-db-0 -c instance-logging
+$ kubectl -n <TAP_DEVELOPER_NAMESPACE> logs newsletter-db-0 -c [pg-container
+$ kubectl -n <TAP_DEVELOPER_NAMESPACE> logs newsletter-db-0 -c reconfigure-instance
+$ kubectl -n <TAP_DEVELOPER_NAMESPACE> logs newsletter-db-0 -c postgres-metrics-exporter
+$ kubectl -n <TAP_DEVELOPER_NAMESPACE> logs newsletter-db-0 -c  postgres-sidecar
 ```
 
 ### Accessing to the Database 
