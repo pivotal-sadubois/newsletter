@@ -324,20 +324,21 @@ spec:
                     createSubscription:
                       description: RSubmitts a Newsletter subscription profils.
                       summary: Add subscription profile.
-                      value: '[[{ "id":"1", "emailId":"bob@example.com", "firstName":"Bob",
-                        "lastName":"Melone"}]'
+                      value: '[{ "emailId":"bob@example.com", "firstName":"Bob",
+                        "lastName":"Seger"}]'
                     createSubscriptionArray:
                       description: Submitts an array of Newsletter subscription profiles.
                       summary: Add array of subscription profiles.
                       value:
                       - emailId: bob@example.com
                         firstName: Bob
-                        id: "1"
-                        lastName: Melone
-                      - emailId: bob@example.com
-                        firstName: Bob
-                        id: "2"
-                        lastName: Melone
+                        lastName: Seger
+                      - emailId: john@example.com
+                        firstName: John
+                        lastName: Foggery
+                      - emailId: frank@example.com
+                        firstName: Frank
+                        lastName: Zappa
                   schema:
                     $ref: '#/components/schemas/Subscription'
               description: User's subscription profile successfully saved.
