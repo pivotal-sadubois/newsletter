@@ -16,5 +16,10 @@ spec:
   owner: newsletter-team
   system: newsletter
   domain: ecommerce-marketplace
+  dependsOn:
+    - resource:newsletter/newsletter-db
+    - resource:default/postgres-operator
   providesApis:
-    - blockchain-api-contour.e2e.corby.cc
+    - newsletter-subscription-api
+    - newsletter-subscription
+    - newsletter/newsletter-subscription
