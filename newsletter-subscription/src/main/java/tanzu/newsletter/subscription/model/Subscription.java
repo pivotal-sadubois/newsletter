@@ -10,9 +10,8 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "subscription")
 public class Subscription {
-	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue (strategy = GenerationType.SEQUENCE)
 	private long id;
 	
 	@Column(name = "first_name")
@@ -34,9 +33,11 @@ public class Subscription {
 		this.lastName = lastName;
 		this.emailId = emailId;
 	}
+	
 	public long getId() {
 		return id;
 	}
+
 	public void setId(long id) {
 		this.id = id;
 	}

@@ -8,6 +8,7 @@ metadata:
     app.kubernetes.io/part-of: newsletter
     apps.tanzu.vmware.com/has-tests: "true"
     apis.apps.tanzu.vmware.com/register-api: "true"
+    apps.tanzu.vmware.com/debug: "true"
   annotations:
     autoscaling.knative.dev/minScale: "1"
 spec:
@@ -32,13 +33,26 @@ spec:
           path: "/v3/api-docs"
         owner: newsletter-team
         system: newsletter-subscription
+        lifecycle: experimental
         description: Newsletter Subscription Management REST API Service 
   source:
     git:
       ref:
         branch: main
       url: https://github.com/pivotal-sadubois/newsletter
-
+      subPath: newsletter-subscription
 
       # tanzu apps workload -n newsletter tail newsletter-subscription --timestamp --since 1h
+      # tanzu apps workload -n newsletter tail newsletter-subscription --timestamp --since 10m
+
       # tanzu apps workload get newsletter-subscription
+      # kubectl config set-context --current --namespace=newsletter
+
+      
+      # tanzu apps workload create tanzu-java-web-app \
+      # --git-branch main \
+      # --git-repo https://github.com/vmware-tanzu/application-accelerator-samples \
+      #   --sub-path tanzu-java-web-app \
+      #   --label apps.tanzu.vmware.com/has-tests=true \
+      #   --label app.kubernetes.io/part-of=tanzu-java-web-app \
+      #   --type web
