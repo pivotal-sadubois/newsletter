@@ -18,3 +18,5 @@ spec:
   domain: ecommerce-marketplace
   providesApis:
     - blockchain-api-contour.e2e.corby.cc
+  consumesApis:
+    - newsletter-subscription

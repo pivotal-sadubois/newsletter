@@ -15,7 +15,9 @@ spec:
   build:
     env:
       - name: NODE_ENV
-        value: development
+        value: "development"
+      - name: BP_WEB_SERVER 
+        value: "httpd"
       - name: BP_NODE_RUN_SCRIPTS
         value: "build"
       - name: BP_WEB_SERVER_ROOT
@@ -41,12 +43,7 @@ spec:
       # tanzu apps workload -n newsletter tail newsletter-ui --timestamp --since 1h
       # tanzu apps workload get newsletter-ui
       # kubectl config set-context --current --namespace=newsletter
+      # kubectl config set-context --current --namespace=nmomcilovic
       # Sacha created
 
-      # tanzu apps workload create tanzu-java-web-app \
-      # --git-branch main \
-      # --git-repo https://github.com/pivotal-sadubois/newsletter \
-      #   --sub-path newsletter-ui \
-      #   --label apps.tanzu.vmware.com/has-tests=true \
-      #   --label app.kubernetes.io/part-of=newsletter \
-      #   --type web
+      # tanzu apps workload create tanzu-java-web-app --git-branch main --git-repo https://github.com/pivotal-sadubois/newsletter  --sub-path newsletter-ui --label apps.tanzu.vmware.com/has-tests=true --label app.kubernetes.io/part-of=newsletter --type web

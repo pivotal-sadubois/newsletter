@@ -1,0 +1,19 @@
+/Users/sdubois/workspace/guestbook/angular-frontend
+
+ng g class user
+sduboisJRQ5D:angular-frontend sdubois$ ng g class user
+CREATE src/app/user.spec.ts (146 bytes)
+CREATE src/app/user.ts (22 bytes)
+
+ng g s user
+CREATE src/app/user.service.spec.ts (347 bytes)
+CREATE src/app/user.service.ts (133 bytes)
+
+ng g c user
+CREATE src/app/user/user.component.css (0 bytes)
+CREATE src/app/user/user.component.html (19 bytes)
+CREATE src/app/user/user.component.spec.ts (585 bytes)
+CREATE src/app/user/user.component.ts (194 bytes)
+sduboisJRQ5D:angular-frontend sdubois$ vi README.nginx
+
+ng serve

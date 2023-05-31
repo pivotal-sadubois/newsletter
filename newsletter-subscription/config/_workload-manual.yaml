@@ -2,7 +2,7 @@
 apiVersion: carto.run/v1alpha1
 kind: Workload
 metadata:
-  name: newsletter-subscription
+  name: newsletter-subscription-old
   labels:
     apps.tanzu.vmware.com/workload-type: web
     app.kubernetes.io/part-of: newsletter
@@ -15,8 +15,8 @@ spec:
   serviceClaims:
     - name: db
       ref:
-        apiVersion: services.apps.tanzu.vmware.com/v1alpha1
-        kind: ClassClaim
+        apiVersion: sql.tanzu.vmware.com/v1
+        kind: Postgres
         name: newsletter-db
   build:
     env:
@@ -47,19 +47,6 @@ spec:
 
       # tanzu apps workload get newsletter-subscription
       # kubectl config set-context --current --namespace=newsletter
-
-      # SERVICE CLAIM
-      # tanzu services classes list
-      # tanzu services classes get postgresql-unmanaged 
-
-      # tanzu service class-claim create newsletter-db --class postgresql-unmanaged --parameter storageGB=1 -n newsletter
-      # tanzu services class-claims get newsletter-db -n newsletter
-      # sdubois$ tanzu service resource-claims list
-      # tanzu service resource-claims get newsletter-db-gk5gq
-
-      # RABBIT-MQ
-      # tanzu service class-claim create newsletter-tabbit --class rabbitmq-unmanaged -n newsletter
-      # tanzu services class-claims get newsletter-tabbit --namespace newsletter
 
       
       # tanzu apps workload create tanzu-java-web-app \

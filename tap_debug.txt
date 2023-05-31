@@ -1,0 +1,264 @@
+
+
+
+
+tanzu@tdh-tools:/$ tanzu apps workload list -n newsletter
+NAME                      TYPE   APP          READY   AGE
+newsletter-subscription   web    newsletter   Ready   6m55s
+tanzu@tdh-tools:/$ tanzu apps workload get newsletter-subscription -n newsletter
+📡 Overview
+   name:        newsletter-subscription
+   type:        web
+   namespace:   newsletter
+
+💾 Source
+   type:    source image
+   image:   harbor.apps-contour.tap.pcfsdu.com/library/newsletter:latest@sha256:3041b8e9894ad207fe8a78bcff039487f490dfd2ee6f7686de8d928607f766b8
+
+📦 Supply Chain
+   name:   source-test-scan-to-url
+
+   NAME               READY   HEALTHY   UPDATED   RESOURCE
+   source-provider    True    True      6m57s     imagerepositories.source.apps.tanzu.vmware.com/newsletter-subscription
+   source-tester      True    True      6m34s     runnables.carto.run/newsletter-subscription
+   source-scanner     True    True      6m3s      sourcescans.scanning.apps.tanzu.vmware.com/newsletter-subscription
+   image-provider     True    True      4m9s      images.kpack.io/newsletter-subscription
+   image-scanner      True    True      3m13s     imagescans.scanning.apps.tanzu.vmware.com/newsletter-subscription
+   config-provider    True    True      3m2s      podintents.conventions.carto.run/newsletter-subscription
+   app-config         True    True      3m2s      configmaps/newsletter-subscription
+   service-bindings   True    True      3m2s      configmaps/newsletter-subscription-with-claims
+   api-descriptors    True    True      3m2s      configmaps/newsletter-subscription-with-api-descriptors
+   config-writer      True    True      2m43s     runnables.carto.run/newsletter-subscription-config-writer
+
+🚚 Delivery
+   name:   delivery-basic
+
+   NAME              READY   HEALTHY   UPDATED   RESOURCE
+   source-provider   True    True      116s      imagerepositories.source.apps.tanzu.vmware.com/newsletter-subscription-delivery
+   deployer          True    True      108s      apps.kappctrl.k14s.io/newsletter-subscription
+
+💬 Messages
+   No messages found.
+
+🔁 Services
+   CLAIM   NAME            KIND       API VERSION
+   db      newsletter-db   Postgres   sql.tanzu.vmware.com/v1
+
+🛶 Pods
+   NAME                                                      READY   STATUS      RESTARTS   AGE
+   newsletter-subscription-00001-deployment-bf8c9986-br8d7   2/2     Running     0          117s
+   newsletter-subscription-build-1-build-pod                 0/1     Completed   0          6m4s
+   newsletter-subscription-config-writer-zgljd-pod           0/1     Completed   0          3m
+   newsletter-subscription-jh4gg-test-pod                    0/1     Completed   0          6m55s
+   scan-newsletter-subscription-74nn6-xkrv4                  0/1     Completed   0          4m11s
+   scan-newsletter-subscription-dqg44-xscsp                  0/1     Completed   0          6m36s
+
+🚢 Knative Services
+   NAME                      READY     URL
+   newsletter-subscription   Unknown   https://newsletter-subscription.apps-contour.tap.pcfsdu.com
+
+To see logs: "tanzu apps workload tail newsletter-subscription --namespace newsletter --timestamp --since 1h"
+
+
+
+tekton
+
+tanzu@tdh-tools:/$ kubectl api-resources | grep -i pipeline              
+pipelineresources                                                        tekton.dev/v1alpha1                                                 true         PipelineResource
+pipelineruns                      pr,prs                                 tekton.dev/v1beta1                                                  true         PipelineRun
+pipelines                                                                tekton.dev/v1beta1                                                  true         Pipeline
+
+tanzu@tdh-tools:/$ kubectl get Pipeline -A
+NAMESPACE    NAME                    AGE
+newsletter   angular-test-pipeline   14h
+newsletter   pipeline-notest         2d17h
+
+
+
+# ------------------------------------------------------------------------------------------
+apiVersion: carto.run/v1alpha1
+kind: Workload
+metadata:
+  name: newsletter-ui
+  labels:
+    apps.tanzu.vmware.com/workload-type: web
+    app.kubernetes.io/part-of: newsletter-ui
+    apps.tanzu.vmware.com/has-tests: "true"
+spec:
+  params:
+    - name: annotations
+      value:
+        autoscaling.knative.dev/minScale: "1"
+    - name: clusterBuilder
+      value: full
+    - name: testing_pipeline_matching_labels
+      value:
+        apps.tanzu.vmware.com/pipeline: test-angular
+  build:
+    env:
+      - name: BP_NODE_RUN_SCRIPTS
+        value: "build"
+      - name: BP_WEB_SERVER_ROOT
+        value: "dist"
+  source:
+    git:
+      url: <https URL for your generated project's Git repository>
+      ref:
+        branch: main
+
+
+tanzu@tdh-tools:/$ tanzu apps workload get newsletter-ui -n newsletter
+📡 Overview
+   name:        newsletter-ui
+   type:        web
+   namespace:   newsletter
+
+💾 Source
+   type:    source image
+   image:   harbor.apps-contour.tap.pcfsdu.com/library/newsletter:latest@sha256:79731504481c2961c21c60f1ed7d1fbb549ad0f23e2f88103aefcd63af70e92a
+
+📦 Supply Chain
+   name:   source-test-scan-to-url
+
+   NAME               READY   HEALTHY   UPDATED   RESOURCE
+   source-provider    True    True      3m48s     imagerepositories.source.apps.tanzu.vmware.com/newsletter-ui
+   source-tester      False   False     111s      runnables.carto.run/newsletter-ui
+   source-scanner     False   Unknown   3m53s     not found
+   image-provider     False   Unknown   3m53s     not found
+   image-scanner      False   Unknown   3m53s     not found
+   config-provider    False   Unknown   3m53s     not found
+   app-config         False   Unknown   3m53s     not found
+   service-bindings   False   Unknown   3m53s     not found
+   api-descriptors    False   Unknown   3m53s     not found
+   config-writer      False   Unknown   3m52s     not found
+
+🚚 Delivery
+   name:   delivery-basic
+
+   NAME              READY   HEALTHY   UPDATED   RESOURCE
+   source-provider   False   False     3m40s     imagerepositories.source.apps.tanzu.vmware.com/newsletter-ui-delivery
+   deployer          False   Unknown   3m48s     not found
+
+💬 Messages
+   Workload [HealthyConditionRule]:   Tasks Completed: 1 (Failed: 1, Cancelled 0), Skipped: 0
+   Deliverable [HealthyConditionRule]:   Unable to resolve image with tag "harbor.apps-contour.tap.pcfsdu.com/tap-supply-chain-scanning/newsletter-ui-newsletter-bundle:0b49c0d0-3444-4bb8-981e-e4dad5baeba9" to a digest: HEAD https://harbor.apps-contour.tap.pcfsdu.com/v2/tap-supply-chain-scanning/newsletter-ui-newsletter-bundle/manifests/0b49c0d0-3444-4bb8-981e-e4dad5baeba9: unexpected status code 404 Not Found (HEAD responses have no body, use GET for details)
+
+🛶 Pods
+   NAME                           READY   STATUS   RESTARTS   AGE
+   newsletter-ui-n26z5-test-pod   0/1     Error    0          3m41s
+
+To see logs: "tanzu apps workload tail newsletter-ui --namespace newsletter --timestamp --since 1h"
+
+
+test-angular
+#  newsletter-ui/config/test-pipeline.yaml 
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: angular-test-pipeline
+  labels:
+    apps.tanzu.vmware.com/pipeline: test-angular
+spec:
+  params:
+    - name: source-url
+    - name: source-revision
+  tasks:
+    - name: test
+      params:
+        - name: source-url
+          value: $(params.source-url)
+        - name: source-revision
+          value: $(params.source-revision)
+      taskSpec:
+        params:
+          - name: source-url
+          - name: source-revision
+        steps:
+          - name: angular-test-chrome-headless
+            image: zenika/alpine-chrome:102-with-node-16
+            script: |-
+              cd `mktemp -d`
+              wget -qO- $(params.source-url) | tar xvz -m
+
+              npm install
+              npm run test-headless
+
+
+
+
+
+
+
+
+
+
+
+
+# ------------
+sduboisJRQ5D:newsletter-ui sdubois$ npm audit
+# npm audit report
+
+loader-utils  3.0.0 - 3.2.0
+Severity: high
+loader-utils is vulnerable to Regular Expression Denial of Service (ReDoS) - https://github.com/advisories/GHSA-hhq3-ff78-jv3g
+loader-utils is vulnerable to Regular Expression Denial of Service (ReDoS) via url variable - https://github.com/advisories/GHSA-3rfm-jhwj-7488
+fix available via `npm audit fix`
+node_modules/loader-utils
+  @angular-devkit/build-angular  0.1200.0-next.0 - 13.3.10 || 14.0.0-next.0 - 14.2.10 || 15.0.0-next.0 - 15.2.3 || 16.0.0-next.0 - 16.0.0-next.3
+  Depends on vulnerable versions of loader-utils
+  Depends on vulnerable versions of webpack
+  node_modules/@angular-devkit/build-angular
+
+webpack  5.0.0 - 5.75.0
+Severity: high
+Cross-realm object access in Webpack 5 - https://github.com/advisories/GHSA-hc6q-2mpp-qw7j
+fix available via `npm audit fix`
+node_modules/webpack
+
+3 high severity vulnerabilities
+
+To address all issues, run:
+  npm audit fix
+sduboisJRQ5D:newsletter-ui sdubois$ 
+sduboisJRQ5D:newsletter-ui sdubois$ npm audit
+sduboisJRQ5D:newsletter-ui sdubois$ cd node_modules/webpack
+sduboisJRQ5D:webpack sdubois$ npm audit fix
+npm ERR! code ENOLOCK
+npm ERR! audit This command requires an existing lockfile.
+npm ERR! audit Try creating one first with: npm i --package-lock-only
+npm ERR! audit Original error: loadVirtual requires existing shrinkwrap file
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     /Users/sdubois/.npm/_logs/2023-04-29T08_59_06_602Z-debug-0.log
+sduboisJRQ5D:webpack sdubois$ npm i --package-lock-only
+npm ERR! code ERESOLVE
+npm ERR! ERESOLVE unable to resolve dependency tree
+npm ERR! 
+npm ERR! While resolving: webpack@5.74.0
+npm ERR! Found: pug@3.0.2
+npm ERR! node_modules/pug
+npm ERR!   dev pug@"^3.0.0" from the root project
+npm ERR! 
+npm ERR! Could not resolve dependency:
+npm ERR! peer pug@"^2.0.0" from pug-loader@2.4.0
+npm ERR! node_modules/pug-loader
+npm ERR!   dev pug-loader@"^2.4.0" from the root project
+npm ERR! 
+npm ERR! Fix the upstream dependency conflict, or retry
+npm ERR! this command with --force or --legacy-peer-deps
+npm ERR! to accept an incorrect (and potentially broken) dependency resolution.
+npm ERR! 
+npm ERR! 
+npm ERR! For a full report see:
+npm ERR! /Users/sdubois/.npm/_logs/2023-04-29T08_59_22_671Z-eresolve-report.txt
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     /Users/sdubois/.npm/_logs/2023-04-29T08_59_22_671Z-debug-0.log
+
+
+
+
+sduboisJRQ5D:coveralls sdubois$ cd node_modules/request
+sduboisJRQ5D:request sdubois$ npm update request
+
+

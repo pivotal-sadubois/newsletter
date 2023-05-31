@@ -99,6 +99,21 @@ subscription=# \l
               |       |          |            |            | user=CTc/user
 (4 rows)
 ```
+Show shema of table
+```
+subscription=# \d subscription
+                     Table "public.subscription"
+   Column   |          Type          | Collation | Nullable | Default
+------------+------------------------+-----------+----------+---------
+ id         | integer                |           | not null |
+ first_name | character varying(255) |           |          |
+ last_name  | character varying(255) |           |          |
+ email_id   | character varying(255) |           | not null |
+Indexes:
+    "subscription_pkey" PRIMARY KEY, btree (id)
+```
+
+
 Try to insert values into the table.
 ```
 subscription=# INSERT INTO subscription(id,first_name,last_name,email_id) VALUES (1, 'Tom', 'Bread', 'tom.bread@test.org');

@@ -1,0 +1,7 @@
+site_name: 'Guestbook AP 22222 Docs'
+
+nav:
+  - Overview API: docs/index.md
+
+plugins:
+  - techdocs-core
