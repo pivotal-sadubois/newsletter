@@ -56,7 +56,79 @@ $ tanzu secret registry add tap-registry-credentials \
   --verbose 0 >/dev/null 2>&1
 ```
 
-## Newsletter Databaase (newsletter-db) - Deploy on Tanuu Application Platform (TAP) 
+## Newsletter Databaase (newsletter-db) - Deploy with Tanzu Application Platform (TAP) 
+This section describes how to deploy a PostgreSQL Database directly from the 'Bitnami Services' integrated in Tanzu Application Platform (TAP). After the 
+deployment application teams will be able to discover, claim, and bind services to their application workloads
+[Working with Bitnami Services](https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.5/tap/bitnami-services-tutorials-working-with-bitnami-services.html)
+
+Installation Steps and Prerequisists:
+- Access to a Tanzu Application Platform cluster v1.5.0 and later
+- The Tanzu services CLI plug-in v0.6.0 and later
+
+The following steps explain how to work with Bitnami Services.
+```
+$ tanzu service class list
+```
+The expected output is similar to the following:
+```
+  NAME                  DESCRIPTION
+  mysql-unmanaged       MySQL by Bitnami
+  postgresql-unmanaged  PostgreSQL by Bitnami
+  rabbitmq-unmanaged    RabbitMQ by Bitnami
+  redis-unmanaged       Redis by Bitnami
+```
+Here the output shows 4 classes. These are the four pre-installed Bitnami Services. You can see from the names and descriptions that they are all unmanaged services. This implies that the resulting service instances run on cluster, that is, they are not a managed service running in the cloud. Other classes might be listed here as well.
+
+You can learn and discover more about a class by running:
+```
+$ tanzu service class get postgresql-unmanaged
+```
+The expected output is similar to the following:
+```
+NAME:           postgresql-unmanaged
+DESCRIPTION:    PostgreSQL by Bitnami
+READY:          true
+
+PARAMETERS:
+  KEY        DESCRIPTION                                                  TYPE     DEFAULT  REQUIRED
+  storageGB  The desired storage capacity of the database, in Gigabytes.  integer  1        false
+```
+To create the claim in a namespace, you must first create the namespace by running:
+```
+$ tanzu service class-claim create newsletter-db --class postgresql-unmanaged --parameter storageGB=3 -n newsletter
+Creating claim 'newsletter-db' in namespace 'newsletter'.
+Please run `tanzu services class-claims get newsletter-db --namespace newsletter` to see the progress of create.
+```
+
+
+
+
+$ tanzu service class-claim create newsletter-db --class postgresql-unmanaged --parameter storageGB=3 -n <namespace>
+Name: newsletter-db
+Namespace: newsletter
+Claim Reference: services.apps.tanzu.vmware.com/v1alpha1:ClassClaim:newsletter-db
+Class Reference: 
+  Name: postgresql-unmanaged
+Parameters: 
+  storageGB: 3
+Status: 
+  Ready: True
+  Claimed Resource: 
+    Name: 101fb718-d596-479c-8e3d-8e966a06e4ec
+    Namespace: <namespace>
+    Group: 
+    Version: v1
+    Kind: Secret
+```
+†o
+
+
+
+
+
+
+
+## Newsletter Databaase (newsletter-db) - Deploy with the VMware Tanzu SQL for Kubernetes Operator
 This document describes the procedure how to deploy the Newsleter Database in your Developer Namespace within the Tanzu Application Platform. Typically 
 the installation of the Database is done prior all other applicaiton components but its not an requirement. 
 

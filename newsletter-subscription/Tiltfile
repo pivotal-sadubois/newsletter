@@ -21,3 +21,5 @@ k8s_custom_deploy(
 k8s_resource('newsletter-subscription', port_forwards=["8080:8080"],
    extra_pod_selectors=[{'carto.run/workload-name': 'newsletter-subscription', 'app.kubernetes.io/component': 'run'}])
 allow_k8s_contexts('tdh-vsphere-sadubois-tap')
+allow_k8s_contexts('tdh-vsphere-sadubois-tap-admin@tdh-vsphere-sadubois-tap')
+allow_k8s_contexts('tdh-vsphere-11766-sadubois-tap-admin@tdh-vsphere-11766-sadubois-tap')

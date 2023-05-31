@@ -7,7 +7,7 @@ metadata:
     'backstage.io/techdocs-ref': dir:.
 spec:
   targets:
-    - resources/newsletter-database/newsletter-database.yaml
+    - resources/newsletter-db/newsletter-db.yaml
     - groups/newsletter-team.yaml
     - components/newsletter-db/newsletter-db.yaml
     - components/newsletter-subscription/newsletter-subscription.yaml

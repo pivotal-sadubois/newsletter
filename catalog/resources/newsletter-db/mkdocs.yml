@@ -1,0 +1,7 @@
+site_name: 'Newsetter Ressource resources/newsletter-fb'
+
+nav:
+  - Overview: index.md
+
+plugins:
+  - techdocs-core

@@ -1,7 +1,0 @@
-site_name: 'Guestbook Ressource resources/user-profile-database'
-
-nav:
-  - Overview: index.md
-
-plugins:
-  - techdocs-core
