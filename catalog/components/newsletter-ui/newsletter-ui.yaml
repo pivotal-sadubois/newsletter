@@ -1,7 +1,8 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: "Newsletter Application - User Interface (UI)"
+  name: newsletter-ui
+  #name: "Newsletter Application - User Interface (UI)"
   description: The Newsletter Application User Interface is designed for administraters of the Newsletter Service to manage user subscriptions
   annotations:
     "backstage.io/kubernetes-label-selector": "app.kubernetes.io/part-of=newsletter"
