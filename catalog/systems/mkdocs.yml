@@ -1,4 +1,4 @@
-site_name: 'Guestbook Domain Docs'
+site_name: 'Newsletter System Docs'
 
 nav:
   - Overview Domain: newsletter.md
