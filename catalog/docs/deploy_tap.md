@@ -12,8 +12,9 @@ Developer Namespace Configuration:
 Within the Tanzu Demo Hub environment (THD) a harbor registry has already been configured for the Tanzu Build Service (TBS) which 
 can be used. Additionally a dockerPullsecret will be configured as h2o environents on vSphere usually run into a docker rate linit.
 ```
+$ export TAP_DEVELOPER_NAMESPACE=newsletter
 $ cd tanzu-demo-hub/scripts
-$ ./tap-create-developer-namespace.sh <namespace-name>
+$ ./tap-create-developer-namespace.sh $TAP_DEVELOPER_NAMESPACE
 namespace created
 namespace labeled
 NAME                                 TYPE                                  DATA   AGE
@@ -42,7 +43,7 @@ To create a TAP Developer Namespace, please refer to the guide in the documentat
 steps are summarized gere: 
 
 ```
-$ export TAP_DEVELOPER_NAMESPACE=<namespace-nae>
+$ export TAP_DEVELOPER_NAMESPACE=newsletter
 $ kubectl create ns $TAP_DEVELOPER_NAMESPACE
 $ kubectl label namespaces $TAP_DEVELOPER_NAMESPACE apps.tanzu.vmware.com/tap-ns=""
 ```
@@ -95,15 +96,13 @@ PARAMETERS:
 ```
 To create the claim in a namespace, you must first create the namespace by running:
 ```
-$ tanzu service class-claim create newsletter-db --class postgresql-unmanaged --parameter storageGB=3 -n newsletter
+$ tanzu service class-claim create newsletter-db --class postgresql-unmanaged --parameter storageGB=3 -n $TAP_DEVELOPER_NAMESPACE
 Creating claim 'newsletter-db' in namespace 'newsletter'.
-Please run `tanzu services class-claims get newsletter-db --namespace newsletter` to see the progress of create.
 ```
+Please run `tanzu services class-claims get newsletter-db --namespace $TAP_DEVELOPER_NAMESPACE` to see the progress of create.
 
-
-
-
-$ tanzu service class-claim create newsletter-db --class postgresql-unmanaged --parameter storageGB=3 -n <namespace>
+```
+$ tanzu service class-claim get newsletter-db  --namespace $TAP_DEVELOPER_NAMESPACE
 Name: newsletter-db
 Namespace: newsletter
 Claim Reference: services.apps.tanzu.vmware.com/v1alpha1:ClassClaim:newsletter-db
@@ -120,7 +119,6 @@ Status:
     Version: v1
     Kind: Secret
 ```
-†o
 
 
 
