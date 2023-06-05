@@ -1,7 +1,8 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: newsletter-ui
+  name: Newsletter Application - User Interface (UI)
+  description: The Newsletter Application User Interface is designed for administraters of the Newsletter Service to manage user subscriptions
   annotations:
     "backstage.io/kubernetes-label-selector": "app.kubernetes.io/part-of=newsletter"
     'backstage.io/techdocs-ref': dir:.
@@ -9,14 +10,11 @@ metadata:
     - url: "https://vmware.wavefront.com/u/gdq77TV7mG?t=map-sales-sandbox"
       title: Dashboard
       icon: dashboard
-
 spec:
   type: service
   lifecycle: experimental
   owner: newsletter-team
   system: newsletter
   domain: ecommerce-marketplace
-  providesApis:
-    - blockchain-api-contour.e2e.corby.cc
   consumesApis:
     - newsletter-subscription
