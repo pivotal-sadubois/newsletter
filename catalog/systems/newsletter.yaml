@@ -3,10 +3,12 @@ apiVersion: backstage.io/v1alpha1
 kind: System
 metadata:
   name: newsletter
-  description: Newsletter Service Application
+  description: The Newsletter Application is part of the eCommerce Marketplace and is designed to interact with subscribed customers to provide them product and service updates
+
   annotations:
     "backstage.io/kubernetes-label-selector": "app.kubernetes.io/part-of=newsletter"
     'backstage.io/techdocs-ref': dir:.
 spec:
+  type: system
   owner: newsletter-team
   domain: ecommerce-marketplace
