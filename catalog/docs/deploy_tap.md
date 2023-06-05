@@ -266,50 +266,111 @@ postgres=# \c newsletter-db
 SSL connection (protocol: TLSv1.3, cipher: TLS_AES_256_GCM_SHA384, compression: off)
 You are now connected to database "newsletter-db" as user "postgres".
 ```
-postgres=# \dt
-Did not find any relations.
+
+## Deploy the Newsletter Subscription (newsletter-subscription) 
+To deploy the newsletter subscription service requires to install a tektron pipeline and a scan policy at first. 
+### Install Tektron Pipeline
 ```
-This makes sense a we dont have installed the rest of the newsletter applicaiton components yet. Repeat that procedure again as newsletter-subscription service has been
-installed and initialised.
-
-## Newsletter Subscription Service (newsletter-subscription) - Deploy on Tanuu Application Platform (TAP)
-The Newsletter Subscription Service can be deployed from a local copy of the Newsleter Git repository directly from your Workstation/Laptop (Developer Inner Loop) or it 
-can be deployed directly from a Git repository.
-
-This document describes the procedure how to deploy the Newsleter Database in your Developer Namespace within the Tanzu Application Platform. Typically
-the installation of the Database is done prior all other applicaiton components but its not an requirement.
-
-Installation Steps and Prerequisists:
-- Accesss to the VMware Software Repository (https://network.pivotal.io/)
-- Downlaod VMware SQL with Postgres for Kubernetes
-- Installal the Tanzu Postgres Operator
-
-Deployment Methodes:
-- Deployment from a local Git repository (Inner Loop)
-- Deployment from a Git repository (DevOps Outer Loop)
-
-In order to interact with TAP the following preeequisits need to be installed and configured. Pleaes follow the instructinos provied in the Tanzu Application Platform (TAP) documentation
-[installing Tanzu CLI](https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.3/tap/GUID-install-tanzu-cli.html)
-
+---
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: pipeline-notest
+  labels:
+    apps.tanzu.vmware.com/pipeline: test     # (!) required
+spec:
+  params:
+    - name: source-url                       # (!) required
+    - name: source-revision                  # (!) required
+  tasks:
+    - name: test
+      params:
+        - name: source-url
+          value: \$(params.source-url)
+        - name: source-revision
+          value: \$(params.source-revision)
+      taskSpec:
+        params:
+          - name: source-url
+          - name: source-revision
+        steps:
+          - name: test
+            image: gradle
+            script: |-
+              echo "Didnu nuffin. LOL!"
+              exit 0 
 ```
+This pipeline is currently nonfigured with no tests to speed-up the deployment for customer demos. But its strongly recommended to add test here according to the 'test driven design' methodology.
+```
+$ export TAP_DEVELOPER_NAMESPACE=newsletter
+$ cd newsleter/newsletter-subscription
+$ kubectl -n $TAP_DEVELOPER_NAMESPACE apply -f config/pipeline-notest.yaml
+pipeline.tekton.dev/pipeline-notest created
+```
+### Install Scan Policy
+The scan policy controls the scanning behavioir for ie. Maven dependancies and container images. The ignoreCves to ignore specific CVE volnerabilites should only be used to hide CVE that are irrelevant for thos application.
+```
+apiVersion: scanning.apps.tanzu.vmware.com/v1beta1
+kind: ScanPolicy
+metadata:
+  name: scan-policy
+  labels:
+    'app.kubernetes.io/part-of': 'enable-in-gui'
+spec:
+  regoFile: |
+    package main
+
+    # Accepted Values: "Critical", "High", "Medium", "Low", "Negligible", "UnknownSeverity"
+    notAllowedSeverities := ["Critical"]
+    ignoreCves := ["CVE-2015-3166","CVE-2018-1115","CVE-2019-10211","CVE-2021-26291","CVE-2015-0244","CVE-2016-1000027","CVE-2016-0949","CVE-2017-11291","CVE-2018-12804","CVE-2018-12805","CVE-2018-4923","CVE-2021-40719","CVE-2018-25076","GHSA-765h-qjxv-5f44","GHSA-f2jv-r9rf-7988","GHSA-w457-6q6x-cgp9","CVE-2021-3918","GHSA-896r-f27r-55mw","GHSA-xvch-5gv4-984h","CVE-2022-43604","CVE-2022-43605","CVE-2016-0949","CVE-2017-11291","CVE-2018-12804","CVE-2018-12805","CVE-2018-4923","GHSA-rprw-h62v-c2w7","CVE-2018-16395","CVE-2022-37434","CVE-2022-37434","GHSA-8q59-q68h-6hv4","CVE-2017-18342","GHSA-6757-jp84-gxfx","GHSA-8q59-q68h-6hv4","GHSA-rprw-h62v-c2w7","CVE-2018-16395"]
+
+    contains(array, elem) = true {
+      array[_] = elem
+    } else = false { true }
+
+    isSafe(match) {
+      severities := { e | e := match.ratings.rating.severity } | { e | e := match.ratings.rating[_].severity }
+      some i
+      fails := contains(notAllowedSeverities, severities[i])
+      not fails
+    }
+
+    isSafe(match) {
+      ignore := contains(ignoreCves, match.id)
+      ignore
+    }
+
+    deny[msg] {
+      comps := { e | e := input.bom.components.component } | { e | e := input.bom.components.component[_] }
+      some i
+      comp := comps[i]
+      vulns := { e | e := comp.vulnerabilities.vulnerability } | { e | e := comp.vulnerabilities.vulnerability[_] }
+      some j
+      vuln := vulns[j]
+      ratings := { e | e := vuln.ratings.rating.severity } | { e | e := vuln.ratings.rating[_].severity }
+      not isSafe(vuln)
+      msg = sprintf("CVE %s %s %s", [comp.name, vuln.id, ratings])
+    }
+
+    
+---
+apiVersion: scanning.apps.tanzu.vmware.com/v1beta1
+kind: ImageScan
+metadata:
+  name: sample-public-image-scan-with-compliance-check
+spec:
+  registry:
+    image: "nginx:1.16"
+  scanTemplate: public-image-scan-template
+  scanPolicy: scan-policy
+```
+To install the scan policy for the newsletter application perform the following command:
+```
+$ kubectl -n $TAP_DEVELOPER_NAMESPACE apply -f config/newsletter-scan-policy.yaml
+imagescan.scanning.apps.tanzu.vmware.com/sample-public-image-scan-with-compliance-check created
 ```
 
-### TAP Inner Loop Deployment (Developer)
-The inner loop consists of local coding, building, running, and testing the application—all activities that you, as a developer, can control. In the past the Inner Lopp was performed
-directly on the developers workstage/laptop that inclide manual compiling, container creation and deployment. With TAP we deploy to a developer environment running on Kubernetes where 
-other teams API's can be accessed as well as backend databases required for testing.
 
-
-### TAP Outer Loop Deployment (Operations)
-The outer loop consists of the larger team processes that your code flows through on its way to the cluster: code reviews, integration tests, security and compliance, and so on.
-
-
-tanzu apps workload delete newsletter-subscription --namespace newsletter --yes 
-
-
-
-
- Create Developer Namespace](https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.5/tap/scst-store-developer-namespace-setup.html).
 
 
 
