@@ -1,7 +1,7 @@
-site_name: 'Newsletter System Docs'
+site_name: 'Newsletter Application Docs'
 
 nav:
-  - Overview Domain: newsletter.md
+  - Overview: index.md
 
 plugins:
   - techdocs-core
