@@ -120,159 +120,126 @@ Status:
     Kind: Secret
 ```
 
-
-
-
-
-
-
-## Newsletter Databaase (newsletter-db) - Deploy with the VMware Tanzu SQL for Kubernetes Operator
-This document describes the procedure how to deploy the Newsleter Database in your Developer Namespace within the Tanzu Application Platform. Typically 
-the installation of the Database is done prior all other applicaiton components but its not an requirement. 
-
-Installation Steps and Prerequisists: 
-- Accesss to the VMware Software Repository (https://network.pivotal.io/)
-- Downlaod VMware SQL with Postgres for Kubernetes
-- Installal the Tanzu Postgres Operator
-
-### Installing a Tanzu Postgres Operator
-The Newsletter Databaase is basing on the Tanhu PostreSQL for Kubernetes deployment and requores the PostgreSQL which can be download for the VMware software Repsitory
-[Installing a Tanzu Postgres Operator](https://docs.vmware.com/en/VMware-SQL-with-Postgres-for-Kubernetes/1.9/tanzu-postgres-k8s/GUID-install-operator.html)
-
-### Add credentials to the Tanzu Registry
-The Tanzu SQL with Postgres for Kubernetes will be directly downloaded during the installation from the VMware Registry (registry.tanzu.vmware.com). An account can be created 
-here (Create your VMware Account](https://account.run.pivotal.io/z/uaa/sign-up). To allow Kubernetes to pull from the VMware Registry a secret needs to be created withing your
-developer Namespace.
-
-NOTICE: This step can be ignored if the developer namespace has been created with (tap-create-developer-namespace.sh)
+### Verify the database Deployment
+The class-claim for the newsletter database (newsletter-db) has been created and the PostgreSQL Database is now provisioned in a seperate kubernetes namespace (newsletter-db-wgk2h).
 ```
-$ kubectl -n <TAP_DEVELOPER_NAMESPACE> create secret docker-registry regsecret \
-          --docker-server=https://registry.tanzu.vmware.com/ \
-          --docker-username=<VMWARE_REGISTRY_USER> \
-          --docker-password=<VMWARE_REGISTRY_PASS> 
+tanzu@tdh-tools:~/newsletter$ kubectl get ns | grep newsletter-db
+newsletter-db-wgk2h            Active   35m
 ```
-
-### Deploying the PostgreSQL Database
-Withing the config directory 
-
 ```
-$ cat config/newsletter-db.yaml 
-apiVersion: sql.tanzu.vmware.com/v1
-kind: Postgres
+tanzu@tdh-tools:~/newsletter$ kubectl get all,secrets -n newsletter-db-wgk2h 
+NAME                        READY   STATUS    RESTARTS   AGE
+pod/newsletter-db-wgk2h-0   1/1     Running   0          10m
+
+NAME                             TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
+service/newsletter-db-wgk2h      ClusterIP   10.96.104.52   <none>        5432/TCP   10m
+service/newsletter-db-wgk2h-hl   ClusterIP   None           <none>        5432/TCP   10m
+
+NAME                                   READY   AGE
+statefulset.apps/newsletter-db-wgk2h   1/1     10m
+
+NAME                                                     TYPE                                DATA   AGE
+secret/newsletter-db-wgk2h                               connection.crossplane.io/v1alpha1   8      11m
+secret/sh.helm.release.v1.newsletter-db-wgk2h-kqgg6.v1   helm.sh/release.v1                  1      11m
+```
+A secret hast been created holding the database user and password. 
+```
+tanzu@tdh-tools:~/newsletter$ kubectl -n newsletter-db-wgk2h  get secrets newsletter-db-wgk2h -o json | jq -r '.data'
+{
+  "database": "bmV3c2xldHRlci1kYi13Z2syaA==",
+  "host": "bmV3c2xldHRlci1kYi13Z2syaA==",
+  "password": "Nzl6cTBxdjA4b2xucHZoMTRwbWZsaWw0dHMxcmxkb2Y=",
+  "port": "NTQzMg==",
+  "postgres-password": "Nzl6cTBxdjA4b2xucHZoMTRwbWZsaWw0dHMxcmxkb2Y=",
+  "provider": "Yml0bmFtaQ==",
+  "type": "cG9zdGdyZXNxbA==",
+  "username": "cG9zdGdyZXM="
+}
+```
+The application deployment does not require to have the details about the newletter-db. This is all managed by the TAP Service Broker that manages the access to the database resource. The developer only requires to have a 'serviceClaim' contiguration for the newsletter-db in his workload.yaml. 
+```
+apiVersion: carto.run/v1alpha1
+kind: Workload
 metadata:
-  name: newsletter-db
+  name: newsletter-subscription
   labels:
+    apps.tanzu.vmware.com/workload-type: web
     app.kubernetes.io/part-of: newsletter
+    apps.tanzu.vmware.com/has-tests: "true"
+    apis.apps.tanzu.vmware.com/register-api: "true"
+    apps.tanzu.vmware.com/debug: "true"
+  annotations:
+    autoscaling.knative.dev/minScale: "1"
 spec:
-  memory: 800Mi
-  cpu: "0.8"
-  # storageClassName: standard
-  storageSize: 2G
-  pgConfig:
-    dbname: newsletter-db
-    username: pgadmin
-    appUser: pgappuser
+  serviceClaims:
+    - name: db
+      ref:
+        apiVersion: services.apps.tanzu.vmware.com/v1alpha1
+        kind: ClassClaim
+        name: newsletter-db
+....
+```
+As the newsletter database on creation time has been configured to be accessed from any application running within the developer namespace 'newsletter'.
 
-```
-The database can be deployed with the command shown below. If your developer namespace has a different name, then reployce '-n newsletter' 
-with the name of your namespace.
-```
-$ kubectl -n <TAP_DEVELOPER_NAMESPACE> create -f config/newsletter-db.yaml
-```
-Now, write a kubernetes label for Backstage to find the releated container in the searches.
-```
-kubectl -n <TAP_DEVELOPER_NAMESPACE> label --overwrite pod newsletter-db-0 app.kubernetes.io/part-of=newsletter
-kubectl -n <TAP_DEVELOPER_NAMESPACE> label --overwrite pod newsletter-db-monitor-0 app.kubernetes.io/part-of=newsletter
-```
-
-### Enable Service Binding for the PostgresSQL Database
-Binding application workloads to service instances is the most common use of services. The Newsletter Application will your a 'resource claims' defined in 
-the workload.yaml file that allows sn automatic connection of the PostgreSQL service instances with a service bindings that exchanges connection credentials as well. Read more about under 
-[Consume services on Tanzu Application Platform](https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.5/tap/getting-started-about-consuming-services.html)
-```
-$ cat config/postgres-class.yaml
----
-apiVersion: services.apps.tanzu.vmware.com/v1alpha1
-kind: ClusterInstanceClass
-metadata:
-  name: user-profile-database
-spec:
-  description:
-    short: It's a PostgreSQL Database
-  pool:
-    group: sql.tanzu.vmware.com
-    kind: Postgres
-```
-Install the Service Instance Class with the following command: 
-```
-$ kubectl -n <TAP_DEVELOPER_NAMESPACE> create -f config/postgres-class.yaml
-```
-
-### Install the Postgres Service Rolebinding
-The postgres-service-binding Rolebinding is only required if the database is deployed in another Kubernetes Namespace than the newletter 
-applicaiton. 
-```
-$ cat config/postgres-service-binding.yaml
-# postgres-service-binding.yaml
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: postgres-service-binding
-  labels:
-    servicebinding.io/controller: "true"
-rules:
-- apiGroups: ["sql.tanzu.vmware.com"]
-  resources: ["Postgres"]
-  verbs: ["get", "list", "watch"]
-```
 
 ### Set the backstage 'part-of' label
 In order for backstage techdocs and the TAP application live view to finde the database pods, a kubernetes label 'part-of' needs
 to be added to the pods.
 ```
-$ kubectl -n <TAP_DEVELOPER_NAMESPACE> label pod newsletter-db-0 app.kubernetes.io/part-of=newsletter                                         
+$ kubectl -n newsletter-db-wgk2h label pod/newsletter-db-wgk2h-0 app.kubernetes.io/part-of=newsletter                                         
 pod/newsletter-db-0 labeled
-$ kubectl -n <TAP_DEVELOPER_NAMESPACE> label pod newsletter-db-monitor-0 app.kubernetes.io/part-of=newsletter
-pod/newsletter-db-monitor-0 labeled
 ```
-### Verify the database Deployment
-If the deployment is successful, the database instance newsetter-db-0 and newsletter-db-monitor-0 should be available and running. 
-```
-$ kubectl -n <TAP_DEVELOPER_NAMESPACE> get pods
-NAME                                                        READY   STATUS      RESTARTS   AGE
-newsletter-db-0                                             5/5     Running     0          24h
-newsletter-db-monitor-0                                     4/4     Running     0          24h
-```
-
 ### Deboug the database deployments
 In case of a problem, the commands shown below should help identifing the issue. 
 ```
 # --- SHOW NAMESPACE RELEATED EVENTS ---
 $ kubectl -n <TAP_DEVELOPER_NAMESPACE> get events
+```
 
+```
 # --- SHOW THE CONTAINER LOGS ---
-$ kubectl -n <TAP_DEVELOPER_NAMESPACE> logs newsletter-db-0 -c instance-logging
-$ kubectl -n <TAP_DEVELOPER_NAMESPACE> logs newsletter-db-0 -c [pg-container
-$ kubectl -n <TAP_DEVELOPER_NAMESPACE> logs newsletter-db-0 -c reconfigure-instance
-$ kubectl -n <TAP_DEVELOPER_NAMESPACE> logs newsletter-db-0 -c postgres-metrics-exporter
-$ kubectl -n <TAP_DEVELOPER_NAMESPACE> logs newsletter-db-0 -c  postgres-sidecar
+$ kubectl -n newsletter-db-wgk2h logs newsletter-db-wgk2h-0 
+postgresql 20:14:23.26 
+postgresql 20:14:23.26 Welcome to the Bitnami postgresql container
+postgresql 20:14:23.27 Subscribe to project updates by watching https://github.com/bitnami/containers
+postgresql 20:14:23.27 Submit issues and feature requests at https://github.com/bitnami/containers/issues
+postgresql 20:14:23.28 
+postgresql 20:14:23.32 INFO  ==> ** Starting PostgreSQL setup **
+postgresql 20:14:23.35 INFO  ==> Validating settings in POSTGRESQL_* env vars..
+postgresql 20:14:23.37 INFO  ==> Loading custom pre-init scripts...
+postgresql 20:14:23.38 INFO  ==> Initializing PostgreSQL database...
+postgresql 20:14:23.44 INFO  ==> pg_hba.conf file not detected. Generating it...
+postgresql 20:14:23.44 INFO  ==> Generating local authentication configuration
+postgresql 20:14:24.40 INFO  ==> Starting PostgreSQL in background...
+postgresql 20:14:24.64 INFO  ==> Changing password of postgres
+postgresql 20:14:24.69 INFO  ==> Configuring replication parameters
+postgresql 20:14:24.77 INFO  ==> Configuring synchronous_replication
+postgresql 20:14:24.77 INFO  ==> Configuring fsync
+postgresql 20:14:24.87 INFO  ==> Stopping PostgreSQL...
+waiting for server to shut down.... done
 ```
 
 ### Accessing to the Database 
 The PostgreSQL can be accessed from from withing the docker container. This is only usefil for debuggin reasons and may not be 
-available in production environment because of lack of permussions.
+available in production environment because of lack of permission. At first get the credentials from the database secret.
 ```
-$ kubectl -n newsletter exec -it newsletter-db-0 -- bash
-Defaulted container "pg-container" out of: pg-container, instance-logging, reconfigure-instance, postgres-metrics-exporter, postgres-sidecar
-postgres@newsletter-db-0:/$ 
+ä kubectl -n newsletter-db-wgk2h get secrets newsletter-db-wgk2h -o json | jq -r '.data.username' | base64 -d
+postgres
+ä kubectl -n newsletter-db-wgk2h get secrets newsletter-db-wgk2h -o json | jq -r '.data."postgres-password"' | base64 -d
+79zq0qv08olnpvh14pmflil4ts1rldof
+```
+Now login in to the docker container with the optained credentials
+```
+$ kubectl -n newsletter-db-wgk2h exec -it newsletter-db-wgk2h-0 -- bash
+I have no name!@newsletter-db-wgk2h-0:/$
 ```
 Now you are inside the PosrgreSQL docker container and can connect to the database as root. Additionally as the psql utility is available 
 in the container as well, you dont need to install it seperatly. Now the connedt to the database instance:
 ```
-postgres@newsletter-db-0:/$ psql -h localhost -p 5432
-psql (15.1 (VMware Postgres 15.1.0))
-SSL connection (protocol: TLSv1.3, cipher: TLS_AES_256_GCM_SHA384, compression: off)
+I have no name!@newsletter-db-wgk2h-0:/$ psql -h localhost -p 5432 -U postgres
+Passowrd: <enter-pasword>
+
+psql (15.2)
 Type "help" for help.
 
 postgres=# \l
