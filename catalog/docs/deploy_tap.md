@@ -1,7 +1,7 @@
 # Deploy on Kubernetes with Tanzu Application Platform (TAP)
 
 ## Create a Developer Namespace
-Bevore you can install the Newletter Demo Applicaiotn you need to create a Developer Namespace. The procedure configures the following: 
+Before you could install the Newletter Demo Applicaiotn you need to create a Developer Namespace. The procedure configures the following: 
 
 Developer Namespace Configuration:
 - Create a Namespace on the TAP Development Cluster
