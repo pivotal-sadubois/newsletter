@@ -1,20 +1,18 @@
 # Newsletter Application - Local deployment
 
 ## Deploy the Database Backend newsletter-db
-The Guestbook User Service (newsletter-subscription) requires a persistent database backend. The subscription-subscription and the 
-subscription-db belong together but are deployed different depending on the envronment.
+The Guestbook User Service (newsletter-subscription) requires a persistent database as a backend. The subscription-subscription and the 
+subscription-db are together but are deployed different depending on the envronment.
 
 ### Prerequisites
 In order to further develop this application the following tools needs to be setup:
 - Java Development Kit (https://bell-sw.com/)
 - Visual Studio Code or IntelliJ IDEA as Integrated Development Environment (IDE)
-- Tanzu Developer Tools plugin for mentioned IDE
+- Tanzu Developer Tools plugin for above mentioned IDE
 - Docker Desktop to execute integration tests or run the application locally
 
 ## Deploying a local PosgreSQL Database for testing
-This database backend is required for local testing of the user-profile-backend applicaiton wich requires a database 
-backend to run the automated tests.  The local database will started as a docker container generated from the docker 
-compose file within this directory. 
+The database backend is required for local testing of the user-profile-backend applicaiton wich requires it to run the automated tests. The local database will started as a docker container generated from the docker compose file within this directory. 
 
 ### Files
 - docker-compose.yml   # Docker Configuration (database, user and password)
@@ -192,17 +190,13 @@ kubectl -n guestbook create -f postgres.yaml
 ## Deploying a PosgreSQL Database on a kubernetes cluster
 
 
-
-
-
-
 It is leveraging Spring Boot as a technology stack, which provides:
 - a way to implement REST(ful) API using Spring Web annotations
 - generation of the OpenAPI definition based on your code
 - data persistence using Spring Data JPA (now PostgreSQL is supported, but other databases can be easily added)
 - an Inversion of Control Container to wire together your classes at running without the need to write tightly-coupled code
 
-The application contains example code implementing REST API to write and read customer profile information to and from 
+The application contains example code implementing REST API for customer profile information read and write from and to the 
 database. This example is intended to showcase best practices around using Spring Boot and it's libraries as well as
 different types of tests which can be utilized to verify different parts of an application.
 
@@ -210,8 +204,8 @@ different types of tests which can be utilized to verify different parts of an a
 In order to further develop this application the following tools needs to be setup:
 - Java Development Kit (https://bell-sw.com/)
 - Visual Studio Code or IntelliJ IDEA as Integrated Development Environment (IDE)
-- Tanzu Developer Tools plugin for mentioned IDE
-- Docker Desktop to execute integration tests or run the application locally
+- Tanzu Developer Tools plugin for above mentioned IDE
+- Docker Desktop to execute integration tests or to run the application locally
 
 # Local
 ## Build
