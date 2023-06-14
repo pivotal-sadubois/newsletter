@@ -7,7 +7,7 @@
 - Enter a Name and Select Access for 'Repo' then hit 'Generate Token'
 
 ## Fork the guestbook Git Repository
-By creating a fork of the original GIT Repository allows you to edit the content in your GitHub environment without doing pull requests on the original repsitory.
+By creating a fork of the original GIT Repository allows you to edit the content in your GitHub environment without doing pull requests on the original repository.
 - Navigate to https://github.com/pivotal-sadubois/guestbook/fork in your browser
 - Select an Owner (specifiy your GitHub account)
 - Select 'Copy the main branch only'
@@ -47,8 +47,8 @@ kubectl -n $APPNAME create -f postgres.yaml
 ```
 
 ## Enable Tanzu Workspace View
-The Tanzu Workspace is part of the Tanzu Addon and monitors that status of TAP deployments, Kubernetes Cluster and
-shows if Tanzu Live Update ore Debbuging is enabled.
+The Tanzu Workspace is part of the Tanzu add-on and monitors that status of TAP deployments, Kubernetes Cluster and
+shows if Tanzu Live Update and Debbuging are enabled.
 
 ### Local Kubeconfig ($HOME/.kube/config or the file associated with the KUBECONFIG variable)
 Modify the entries reflecting your kubernetes cluster (ie. tdh-vsphere-sadubois-tap) section in the $HOME/.kube/config or
@@ -67,9 +67,9 @@ vscode-settings-guestbook.json
 
 # Compile and Test the Guestbook Application
 As a developer there are two option to build and test the application environment. The first option is running the
-user-profile-backend and user-profile-database directly on your labtop where the PostgreSQL database will be deployed
+user-profile-backend and user-profile-database directly on your laptop where the PostgreSQL database will be deployed
 as a Docker Container and the user-profile-backend can be build (Maven build) directly within VSCode. The second option
-is to deploy the all components of the Guestbook Application (user-profile-backend, user-profile-database and user-profile-ui
+is to deploy all components of the Guestbook Application (user-profile-backend, user-profile-database and user-profile-ui
 to kubernetes with Tanzu Applicaiton Platform (TAP). Both scensarios will be described.
 
 
