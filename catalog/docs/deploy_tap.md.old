@@ -1,0 +1,407 @@
+# Deploy on Kubernetes with Tanzu Application Platform (TAP)
+
+## Create a Developer Namespace
+Bevore you can install the Newletter Demo Applicaiotn you need to create a Developer Namespace. The procedure configures the following: 
+
+Developer Namespace Configuration:
+- Create a Namespace on the TAP Development Cluster
+- Add secrets for the container registry used by the Tanzu Build Service (TBS)
+- Label the namespace for the Namespace Provisioner Service in TAP
+
+### Create TAP Developer Namespace in the Tanzu Demo Hub (TDH) Environment
+Within the Tanzu Demo Hub environment (THD) a harbor registry has already been configured for the Tanzu Build Service (TBS) which 
+can be used. Additionally a dockerPullsecret will be configured as h2o environents on vSphere usually run into a docker rate linit.
+```
+$ export TAP_DEVELOPER_NAMESPACE=newsletter
+$ cd tanzu-demo-hub/scripts
+$ ./tap-create-developer-namespace.sh $TAP_DEVELOPER_NAMESPACE
+namespace created
+namespace labeled
+NAME                                 TYPE                                  DATA   AGE
+secret/default-token-zc82w           kubernetes.io/service-account-token   3      74s
+secret/grype-scanner-token-7wg2r     kubernetes.io/service-account-token   3      54s
+secret/harbor-registry-credentials   kubernetes.io/dockerconfigjson        1      66s
+secret/registries-credentials        kubernetes.io/dockerconfigjson        1      61s
+secret/scanner-secret-ref            kubernetes.io/dockerconfigjson        1      54s
+secret/vmware-registry-credentials   kubernetes.io/dockerconfigjson        1      64s
+
+NAME                           SECRETS   AGE
+serviceaccount/default         2         75s
+serviceaccount/grype-scanner   4         55s
+
+NAME                                                               ROLE                      AGE
+rolebinding.rbac.authorization.k8s.io/default-permit-deliverable   ClusterRole/deliverable   62s
+rolebinding.rbac.authorization.k8s.io/default-permit-workload      ClusterRole/workload      62s
+
+NAME                         DATA   AGE
+configmap/kube-root-ca.crt   1      76s
+```
+
+### Create TAP Developer according to the Documentation
+To create a TAP Developer Namespace, please refer to the guide in the documentation and follow the procedure 
+[Provision developer namespaces](https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.5/tap/namespace-provisioner-provision-developer-ns.html). The following 
+steps are summarized gere: 
+
+```
+$ export TAP_DEVELOPER_NAMESPACE=newsletter
+$ kubectl create ns $TAP_DEVELOPER_NAMESPACE
+$ kubectl label namespaces $TAP_DEVELOPER_NAMESPACE apps.tanzu.vmware.com/tap-ns=""
+```
+Create Secrets for the TAP registry used for the Tanzu Build Service (TBS).
+```
+$ tanzu secret registry add tap-registry-credentials \
+  --server <REGISTRY_SERVER> \
+  --username "<REGISTRY_USERNAME>" \
+  --password "<$REGISTRY_PASSWORD>" \
+  --namespace "<TAP_DEVELOPER_NAMESPACE>" \
+  --verbose 0 >/dev/null 2>&1
+```
+
+## Newsletter Databaase (newsletter-db) - Deploy with Tanzu Application Platform (TAP) 
+This section describes how to deploy a PostgreSQL Database directly from the 'Bitnami Services' integrated in Tanzu Application Platform (TAP). After the 
+deployment application teams will be able to discover, claim, and bind services to their application workloads
+[Working with Bitnami Services](https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.5/tap/bitnami-services-tutorials-working-with-bitnami-services.html)
+
+Installation Steps and Prerequisists:
+- Access to a Tanzu Application Platform cluster v1.5.0 and later
+- The Tanzu services CLI plug-in v0.6.0 and later
+
+The following steps explain how to work with Bitnami Services.
+```
+$ tanzu service class list
+```
+The expected output is similar to the following:
+```
+  NAME                  DESCRIPTION
+  mysql-unmanaged       MySQL by Bitnami
+  postgresql-unmanaged  PostgreSQL by Bitnami
+  rabbitmq-unmanaged    RabbitMQ by Bitnami
+  redis-unmanaged       Redis by Bitnami
+```
+Here the output shows 4 classes. These are the four pre-installed Bitnami Services. You can see from the names and descriptions that they are all unmanaged services. This implies that the resulting service instances run on cluster, that is, they are not a managed service running in the cloud. Other classes might be listed here as well.
+
+You can learn and discover more about a class by running:
+```
+$ tanzu service class get postgresql-unmanaged
+```
+The expected output is similar to the following:
+```
+NAME:           postgresql-unmanaged
+DESCRIPTION:    PostgreSQL by Bitnami
+READY:          true
+
+PARAMETERS:
+  KEY        DESCRIPTION                                                  TYPE     DEFAULT  REQUIRED
+  storageGB  The desired storage capacity of the database, in Gigabytes.  integer  1        false
+```
+To create the claim in a namespace, you must first create the namespace by running:
+```
+$ tanzu service class-claim create newsletter-db --class postgresql-unmanaged --parameter storageGB=3 -n $TAP_DEVELOPER_NAMESPACE
+Creating claim 'newsletter-db' in namespace 'newsletter'.
+```
+Please run `tanzu services class-claims get newsletter-db --namespace $TAP_DEVELOPER_NAMESPACE` to see the progress of create.
+
+```
+$ tanzu service class-claim get newsletter-db  --namespace $TAP_DEVELOPER_NAMESPACE
+Name: newsletter-db
+Namespace: newsletter
+Claim Reference: services.apps.tanzu.vmware.com/v1alpha1:ClassClaim:newsletter-db
+Class Reference: 
+  Name: postgresql-unmanaged
+Parameters: 
+  storageGB: 3
+Status: 
+  Ready: True
+  Claimed Resource: 
+    Name: 101fb718-d596-479c-8e3d-8e966a06e4ec
+    Namespace: <namespace>
+    Group: 
+    Version: v1
+    Kind: Secret
+```
+The class-claim for the newsletter database (newsletter-db) has been created and the PostgreSQL Database is now provisioned in a seperate kubernetes namespace (newsletter-db-wgk2h).
+
+```
+tanzu@tdh-tools:~/newsletter$ kubectl get all,secrets -n newsletter-db-wgk2h 
+NAME                        READY   STATUS    RESTARTS   AGE
+pod/newsletter-db-wgk2h-0   1/1     Running   0          10m
+
+NAME                             TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
+service/newsletter-db-wgk2h      ClusterIP   10.96.104.52   <none>        5432/TCP   10m
+service/newsletter-db-wgk2h-hl   ClusterIP   None           <none>        5432/TCP   10m
+
+NAME                                   READY   AGE
+statefulset.apps/newsletter-db-wgk2h   1/1     10m
+
+NAME                                                     TYPE                                DATA   AGE
+secret/newsletter-db-wgk2h                               connection.crossplane.io/v1alpha1   8      11m
+secret/sh.helm.release.v1.newsletter-db-wgk2h-kqgg6.v1   helm.sh/release.v1                  1      11m
+```
+A secret hast been created holding the database user and password. 
+```
+tanzu@tdh-tools:~/newsletter$ kubectl -n newsletter-db-wgk2h  get secrets newsletter-db-wgk2h -o json | jq -r '.data'
+{
+  "database": "bmV3c2xldHRlci1kYi13Z2syaA==",
+  "host": "bmV3c2xldHRlci1kYi13Z2syaA==",
+  "password": "Nzl6cTBxdjA4b2xucHZoMTRwbWZsaWw0dHMxcmxkb2Y=",
+  "port": "NTQzMg==",
+  "postgres-password": "Nzl6cTBxdjA4b2xucHZoMTRwbWZsaWw0dHMxcmxkb2Y=",
+  "provider": "Yml0bmFtaQ==",
+  "type": "cG9zdGdyZXNxbA==",
+  "username": "cG9zdGdyZXM="
+}
+```
+The application deployment does not require to have the details about the newletter-db. This is all managed by the TAP Service Broker that manages the access to the database resource. The developer only requires to have a 'serviceClaim' contiguration for the newsletter-db in his workload.yaml. 
+```
+apiVersion: carto.run/v1alpha1
+kind: Workload
+metadata:
+  name: newsletter-subscription
+  labels:
+    apps.tanzu.vmware.com/workload-type: web
+    app.kubernetes.io/part-of: newsletter
+    apps.tanzu.vmware.com/has-tests: "true"
+    apis.apps.tanzu.vmware.com/register-api: "true"
+    apps.tanzu.vmware.com/debug: "true"
+  annotations:
+    autoscaling.knative.dev/minScale: "1"
+spec:
+  serviceClaims:
+    - name: db
+      ref:
+        apiVersion: services.apps.tanzu.vmware.com/v1alpha1
+        kind: ClassClaim
+        name: newsletter-db
+....
+```
+As the newsletter database on creation time has been configured to be accessed from any application running within the developer namespace 'newsletter'.
+
+
+XXXXXXXXXXXXXXXXXXXXX
+
+
+
+## Newsletter Databaase (newsletter-db) - Deploy with the VMware Tanzu SQL for Kubernetes Operator
+This document describes the procedure how to deploy the Newsleter Database in your Developer Namespace within the Tanzu Application Platform. Typically 
+the installation of the Database is done prior all other applicaiton components but its not an requirement. 
+
+Installation Steps and Prerequisists: 
+- Accesss to the VMware Software Repository (https://network.pivotal.io/)
+- Downlaod VMware SQL with Postgres for Kubernetes
+- Installal the Tanzu Postgres Operator
+
+### Installing a Tanzu Postgres Operator
+The Newsletter Databaase is basing on the Tanhu PostreSQL for Kubernetes deployment and requores the PostgreSQL which can be download for the VMware software Repsitory
+[Installing a Tanzu Postgres Operator](https://docs.vmware.com/en/VMware-SQL-with-Postgres-for-Kubernetes/1.9/tanzu-postgres-k8s/GUID-install-operator.html)
+
+### Add credentials to the Tanzu Registry
+The Tanzu SQL with Postgres for Kubernetes will be directly downloaded during the installation from the VMware Registry (registry.tanzu.vmware.com). An account can be created 
+here (Create your VMware Account](https://account.run.pivotal.io/z/uaa/sign-up). To allow Kubernetes to pull from the VMware Registry a secret needs to be created withing your
+developer Namespace.
+
+NOTICE: This step can be ignored if the developer namespace has been created with (tap-create-developer-namespace.sh)
+```
+$ kubectl -n <TAP_DEVELOPER_NAMESPACE> create secret docker-registry regsecret \
+          --docker-server=https://registry.tanzu.vmware.com/ \
+          --docker-username=<VMWARE_REGISTRY_USER> \
+          --docker-password=<VMWARE_REGISTRY_PASS> 
+```
+
+### Deploying the PostgreSQL Database
+Withing the config directory 
+
+```
+$ cat config/newsletter-db.yaml 
+apiVersion: sql.tanzu.vmware.com/v1
+kind: Postgres
+metadata:
+  name: newsletter-db
+  labels:
+    app.kubernetes.io/part-of: newsletter
+spec:
+  memory: 800Mi
+  cpu: "0.8"
+  # storageClassName: standard
+  storageSize: 2G
+  pgConfig:
+    dbname: newsletter-db
+    username: pgadmin
+    appUser: pgappuser
+
+```
+The database can be deployed with the command shown below. If your developer namespace has a different name, then reployce '-n newsletter' 
+with the name of your namespace.
+```
+$ kubectl -n <TAP_DEVELOPER_NAMESPACE> create -f config/newsletter-db.yaml
+```
+Now, write a kubernetes label for Backstage to find the releated container in the searches.
+```
+kubectl -n <TAP_DEVELOPER_NAMESPACE> label --overwrite pod newsletter-db-0 app.kubernetes.io/part-of=newsletter
+kubectl -n <TAP_DEVELOPER_NAMESPACE> label --overwrite pod newsletter-db-monitor-0 app.kubernetes.io/part-of=newsletter
+```
+
+### Enable Service Binding for the PostgresSQL Database
+Binding application workloads to service instances is the most common use of services. The Newsletter Application will your a 'resource claims' defined in 
+the workload.yaml file that allows sn automatic connection of the PostgreSQL service instances with a service bindings that exchanges connection credentials as well. Read more about under 
+[Consume services on Tanzu Application Platform](https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.5/tap/getting-started-about-consuming-services.html)
+```
+$ cat config/postgres-class.yaml
+---
+apiVersion: services.apps.tanzu.vmware.com/v1alpha1
+kind: ClusterInstanceClass
+metadata:
+  name: user-profile-database
+spec:
+  description:
+    short: It's a PostgreSQL Database
+  pool:
+    group: sql.tanzu.vmware.com
+    kind: Postgres
+```
+Install the Service Instance Class with the following command: 
+```
+$ kubectl -n <TAP_DEVELOPER_NAMESPACE> create -f config/postgres-class.yaml
+```
+
+### Install the Postgres Service Rolebinding
+The postgres-service-binding Rolebinding is only required if the database is deployed in another Kubernetes Namespace than the newletter 
+applicaiton. 
+```
+$ cat config/postgres-service-binding.yaml
+# postgres-service-binding.yaml
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: postgres-service-binding
+  labels:
+    servicebinding.io/controller: "true"
+rules:
+- apiGroups: ["sql.tanzu.vmware.com"]
+  resources: ["Postgres"]
+  verbs: ["get", "list", "watch"]
+```
+
+### Set the backstage 'part-of' label
+In order for backstage techdocs and the TAP application live view to finde the database pods, a kubernetes label 'part-of' needs
+to be added to the pods.
+```
+$ kubectl -n <TAP_DEVELOPER_NAMESPACE> label pod newsletter-db-0 app.kubernetes.io/part-of=newsletter                                         
+pod/newsletter-db-0 labeled
+$ kubectl -n <TAP_DEVELOPER_NAMESPACE> label pod newsletter-db-monitor-0 app.kubernetes.io/part-of=newsletter
+pod/newsletter-db-monitor-0 labeled
+```
+### Verify the database Deployment
+If the deployment is successful, the database instance newsetter-db-0 and newsletter-db-monitor-0 should be available and running. 
+```
+$ kubectl -n <TAP_DEVELOPER_NAMESPACE> get pods
+NAME                                                        READY   STATUS      RESTARTS   AGE
+newsletter-db-0                                             5/5     Running     0          24h
+newsletter-db-monitor-0                                     4/4     Running     0          24h
+```
+
+### Deboug the database deployments
+In case of a problem, the commands shown below should help identifing the issue. 
+```
+# --- SHOW NAMESPACE RELEATED EVENTS ---
+$ kubectl -n <TAP_DEVELOPER_NAMESPACE> get events
+
+# --- SHOW THE CONTAINER LOGS ---
+$ kubectl -n <TAP_DEVELOPER_NAMESPACE> logs newsletter-db-0 -c instance-logging
+$ kubectl -n <TAP_DEVELOPER_NAMESPACE> logs newsletter-db-0 -c [pg-container
+$ kubectl -n <TAP_DEVELOPER_NAMESPACE> logs newsletter-db-0 -c reconfigure-instance
+$ kubectl -n <TAP_DEVELOPER_NAMESPACE> logs newsletter-db-0 -c postgres-metrics-exporter
+$ kubectl -n <TAP_DEVELOPER_NAMESPACE> logs newsletter-db-0 -c  postgres-sidecar
+```
+
+### Accessing to the Database 
+The PostgreSQL can be accessed from from withing the docker container. This is only usefil for debuggin reasons and may not be 
+available in production environment because of lack of permussions.
+```
+$ kubectl -n newsletter exec -it newsletter-db-0 -- bash
+Defaulted container "pg-container" out of: pg-container, instance-logging, reconfigure-instance, postgres-metrics-exporter, postgres-sidecar
+postgres@newsletter-db-0:/$ 
+```
+Now you are inside the PosrgreSQL docker container and can connect to the database as root. Additionally as the psql utility is available 
+in the container as well, you dont need to install it seperatly. Now the connedt to the database instance:
+```
+postgres@newsletter-db-0:/$ psql -h localhost -p 5432
+psql (15.1 (VMware Postgres 15.1.0))
+SSL connection (protocol: TLSv1.3, cipher: TLS_AES_256_GCM_SHA384, compression: off)
+Type "help" for help.
+
+postgres=# \l
+                                                                         List of databases
+     Name      |           Owner           | Encoding | Collate |  Ctype  | ICU Locale | Locale Provider |                    Access privileges                    
+---------------+---------------------------+----------+---------+---------+------------+-----------------+---------------------------------------------------------
+ newsletter-db | pgautofailover_replicator | UTF8     | C.UTF-8 | C.UTF-8 |            | libc            | pgautofailover_replicator=CTc/pgautofailover_replicator+
+               |                           |          |         |         |            |                 | postgres_exporter=c/pgautofailover_replicator          +
+               |                           |          |         |         |            |                 | pgappuser=CTc/pgautofailover_replicator                +
+               |                           |          |         |         |            |                 | pgrouser=c/pgautofailover_replicator                   +
+               |                           |          |         |         |            |                 | pgrwuser=c/pgautofailover_replicator
+ postgres      | postgres                  | UTF8     | C.UTF-8 | C.UTF-8 |            | libc            | postgres=CTc/postgres                                  +
+               |                           |          |         |         |            |                 | pgautofailover_monitor=c/postgres                      +
+               |                           |          |         |         |            |                 | postgres_exporter=c/postgres
+ template0     | postgres                  | UTF8     | C.UTF-8 | C.UTF-8 |            | libc            | =c/postgres                                            +
+               |                           |          |         |         |            |                 | postgres=CTc/postgres
+ template1     | postgres                  | UTF8     | C.UTF-8 | C.UTF-8 |            | libc            | =c/postgres                                            +
+               |                           |          |         |         |            |                 | postgres=CTc/postgres
+(4 rows)
+```
+Now change to the Database 'newsletter-db' and show if there a are any tables configured.
+```
+postgres=# \c newsletter-db
+SSL connection (protocol: TLSv1.3, cipher: TLS_AES_256_GCM_SHA384, compression: off)
+You are now connected to database "newsletter-db" as user "postgres".
+```
+postgres=# \dt
+Did not find any relations.
+```
+This makes sense a we dont have installed the rest of the newsletter applicaiton components yet. Repeat that procedure again as newsletter-subscription service has been
+installed and initialised.
+
+## Newsletter Subscription Service (newsletter-subscription) - Deploy on Tanuu Application Platform (TAP)
+The Newsletter Subscription Service can be deployed from a local copy of the Newsleter Git repository directly from your Workstation/Laptop (Developer Inner Loop) or it 
+can be deployed directly from a Git repository.
+
+This document describes the procedure how to deploy the Newsleter Database in your Developer Namespace within the Tanzu Application Platform. Typically
+the installation of the Database is done prior all other applicaiton components but its not an requirement.
+
+Installation Steps and Prerequisists:
+- Accesss to the VMware Software Repository (https://network.pivotal.io/)
+- Downlaod VMware SQL with Postgres for Kubernetes
+- Installal the Tanzu Postgres Operator
+
+Deployment Methodes:
+- Deployment from a local Git repository (Inner Loop)
+- Deployment from a Git repository (DevOps Outer Loop)
+
+In order to interact with TAP the following preeequisits need to be installed and configured. Pleaes follow the instructinos provied in the Tanzu Application Platform (TAP) documentation
+[installing Tanzu CLI](https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.3/tap/GUID-install-tanzu-cli.html)
+
+```
+```
+
+### TAP Inner Loop Deployment (Developer)
+The inner loop consists of local coding, building, running, and testing the application—all activities that you, as a developer, can control. In the past the Inner Lopp was performed
+directly on the developers workstage/laptop that inclide manual compiling, container creation and deployment. With TAP we deploy to a developer environment running on Kubernetes where 
+other teams API's can be accessed as well as backend databases required for testing.
+
+
+### TAP Outer Loop Deployment (Operations)
+The outer loop consists of the larger team processes that your code flows through on its way to the cluster: code reviews, integration tests, security and compliance, and so on.
+
+
+tanzu apps workload delete newsletter-subscription --namespace newsletter --yes 
+
+
+
+
+ Create Developer Namespace](https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.5/tap/scst-store-developer-namespace-setup.html).
+
+
+
+
+
+
+

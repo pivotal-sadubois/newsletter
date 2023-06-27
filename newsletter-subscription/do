@@ -1,0 +1,1 @@
+tanzu apps workload apply --file /Users/sdubois/workspace/newsletter/newsletter-subscription/config/workload-manual.yaml --namespace newsletter --source-image harbor.apps-contour.vsptap.pcfsdu.com/library/newsletter --debug --yes --local-path /Users/sdubois/workspace/newsletter/newsletter-subscription --live-update --tail --update-strategy replace

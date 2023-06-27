@@ -21,7 +21,9 @@ spec:
   build:
     env:
       - name: BP_JVM_VERSION
-        value: "19"
+        value:
+        
+         "19"
   params:
     - name: annotations
       value:
@@ -41,6 +43,9 @@ spec:
         branch: main
       url: https://github.com/pivotal-sadubois/newsletter
       subPath: newsletter-subscription
+
+      # docker login harbor.apps.tapmc.pcfsdu.com/ -u admin -p Password12345
+      # docker login harbor.apps.tap.pcfsdu.com/ -u admin -p Password12345
 
       # tanzu apps workload -n newsletter tail newsletter-subscription --timestamp --since 1h
       # tanzu apps workload -n newsletter tail newsletter-subscription --timestamp --since 10m

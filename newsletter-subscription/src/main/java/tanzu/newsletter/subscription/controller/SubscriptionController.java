@@ -69,7 +69,7 @@ public class SubscriptionController {
 	}
 
 	/* DELETE ALL SUBSCRIPTIONS */
-	
+	/* 
 	@Operation(summary = "Delete all subscription profiles", method = "DELETE", tags = "Array of Subscription Profiles")
 	@ApiResponses({
 		@ApiResponse(
@@ -94,7 +94,7 @@ public class SubscriptionController {
 			System.out.println("HTTP-DELETE: Debug: " + item.getEmailId());
 			System.out.println("HTTP-DELETE-TEST-1: Debug: " + item.getEmailId());
 			System.out.println("XXXXX HTTP-DELETE-TEST-1: Debug: " + item.getEmailId());
-			subscriptionRepository.delete(item);
+			//subscriptionRepository.delete(item);
 		}
 	
 		Map<String, Boolean> response = new HashMap<>();
@@ -102,7 +102,7 @@ public class SubscriptionController {
 	
 		return ResponseEntity.ok(response);
 	}
-	
+	*/
 	
 	@Operation(summary = "Saves a provided subscription profiles.", method = "POST", tags = "Subscription Profiles")
 	@ApiResponses({
