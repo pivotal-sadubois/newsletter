@@ -1,4 +1,4 @@
-# Newsletter Database (components/newsletter-db/docs/index.md)
+# Newsletter Database (PostgreSQL)
 The Newsletter Database acts as backend for the Newsletter User Service and is based on a PostgreSQL Database running in a container with
 the same Kubernetes Namespace as the application. The Database is deployed and managed trough the PostgreSQL Operator running in the default namespace
 of the same cluster. More information about the VMware PostgreSQL Operator can be seen in the documentation

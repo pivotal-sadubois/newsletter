@@ -1,4 +1,4 @@
-site_name: 'Newsletter Datanase'
+site_name: 'Newsletter Database'
 
 nav:
   - Overview: index.md
