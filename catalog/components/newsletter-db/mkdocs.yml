@@ -1,7 +1,7 @@
-site_name: 'Guestbook Component components/user-profile-database'
+site_name: 'Newsletter Datanase'
 
 nav:
-  - Overview Component: index.md
+  - Overview: index.md
 
 plugins:
   - techdocs-core
