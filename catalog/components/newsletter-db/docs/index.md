@@ -1,9 +1,18 @@
 # Newsletter Database (components/newsletter-db/docs/index.md)
+The Newsletter Database acts as backend for the Newsletter User Service and is based on a PostgreSQL Database running in a container with
+the same Kubernetes Namespace as the application. The Database is deployed and managed trough the PostgreSQL Operator running in the default namespace
+of the same cluster. More information about the VMware PostgreSQL Operator can be seen in the documentation
+[VMware SQL with Postgres for Kubernetes Operator](https://docs.vmware.com/en/VMware-SQL-with-Postgres-for-Kubernetes/2.0/vmware-postgres-k8s/GUID-install-operator.html).
 
-## Newsletter Databaase (newsletter-db) - Deploy with Tanzu Application Platform (TAP)
+The picture below shows the architecture of the Newsletter Application:
+![newsletter-architecture](images/newsletter.jpg)
+
+## Database deployment on Tanzu Application Platform (TAP)
 This section describes how to deploy a PostgreSQL Database directly from the 'Bitnami Services' integrated in Tanzu Application Platform (TAP). After the
 deployment application teams will be able to discover, claim, and bind services to their application workloads
 [Working with Bitnami Services](https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/1.5/tap/bitnami-services-tutorials-working-with-bitnami-services.html)
+
+### Create a Service Class-Claim
 
 Installation Steps and Prerequisists:
 - Access to a Tanzu Application Platform cluster v1.5.0 and later
