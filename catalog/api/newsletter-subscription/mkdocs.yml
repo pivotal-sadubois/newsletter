@@ -1,7 +1,4 @@
 site_name: 'Newsletter Subscription Service API Docs'
 
-nav:
-  - Overview
-
 plugins:
   - techdocs-core
