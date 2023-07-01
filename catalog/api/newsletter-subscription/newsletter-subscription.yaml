@@ -2,7 +2,7 @@ apiVersion: backstage.io/v1alpha1
 kind: API
 metadata:
   name: newsletter-subscription
-  description: This API create, delete, list and modifies newsletter subscriptions
+  description: The Newsletter Subscription Service API to create, delete, list and modifies subscriptions of the Newsletter Service
   annotations:
     "backstage.io/kubernetes-label-selector": "app.kubernetes.io/part-of=newsletter"
     'backstage.io/techdocs-ref': dir:.
