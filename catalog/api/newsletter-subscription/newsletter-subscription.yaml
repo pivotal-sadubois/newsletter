@@ -391,7 +391,7 @@ spec:
           tags:
           - Array of Subscription Profiles
     servers:
-    - url: https://newsletter-subscription.apps-contour.vsptap.pcfsdu.com
+    - url: https://newsletter-subscription.dev.tanzudemohub.com
     tags:
     - name: Subscription REST API
     
