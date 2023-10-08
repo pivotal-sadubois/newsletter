@@ -21,9 +21,7 @@ spec:
   build:
     env:
       - name: BP_JVM_VERSION
-        value:
-        
-         "19"
+        value: "20"
   params:
     - name: annotations
       value:
@@ -43,6 +41,15 @@ spec:
         branch: main
       url: https://github.com/pivotal-sadubois/newsletter
       subPath: newsletter-subscription
+
+
+
+
+
+
+
+
+      
 
       # docker login harbor.apps.tapmc.pcfsdu.com/ -u admin -p Password12345
       # docker login harbor.apps.tap.pcfsdu.com/ -u admin -p Password12345
@@ -69,8 +76,11 @@ spec:
       
       # tanzu apps workload create tanzu-java-web-app \
       # --git-branch main \
-      # --git-repo https://github.com/vmware-tanzu/application-accelerator-samples \
-      #   --sub-path tanzu-java-web-app \
+      # --git-repo https://github.com/pivotal-sadubois/newsletter \
+      #   --sub-path newsletter-subscription \
       #   --label apps.tanzu.vmware.com/has-tests=true \
-      #   --label app.kubernetes.io/part-of=tanzu-java-web-app \
-      #   --type web
+      #   --label app.kubernetes.io/part-of=newsletter \
+      #   --type web 
+      
+
+    

@@ -23,3 +23,5 @@ k8s_resource('newsletter-subscription', port_forwards=["8080:8080"],
 allow_k8s_contexts('tdh-vsphere-sadubois-tap')
 allow_k8s_contexts('tdh-vsphere-sadubois-tap-admin@tdh-vsphere-sadubois-tap')
 allow_k8s_contexts('tdh-vsphere-11766-sadubois-tap-admin@tdh-vsphere-11766-sadubois-tap')
+allow_k8s_contexts('tdh-vsphere-tkgs-sdubois-dev-admin@tdh-vsphere-tkgs-sdubois-dev')
+allow_k8s_contexts('tdh-azure-aks-sdubois-dev-admin')
