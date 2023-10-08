@@ -4,8 +4,7 @@ metadata:
   name: newsletter
   description: Newsletter Application
   annotations:
-    'backstage.io/techdocs-ref': dir:.
-    'backstage.io/source-location: url: "https://github.com/pivotal-sadubois/newsletter/blob/main/catalog"'
+    backstage.io/techdocs-ref: dir:.
 
 spec:
   targets:
