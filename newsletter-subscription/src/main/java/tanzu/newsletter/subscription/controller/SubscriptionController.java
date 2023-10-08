@@ -61,6 +61,7 @@ public class SubscriptionController {
 					examples = {
 							@ExampleObject(value = "{ \"timestamp\":\"2023-04-13T19:42:38.918+00:00\", \"status\":\"404\", \"error\":\"Not Found\", \"path\":\"/api/v1/subscription\" }") }, mediaType = "application/json"))
 	})
+
 	@GetMapping("/subscriptions")
 	public List<Subscription> getAllSubscription() {
 		System.out.println("HTTP-GET-2: /api/subscriptions hallo");
@@ -102,12 +103,10 @@ public class SubscriptionController {
 	
 		return ResponseEntity.ok(response);
 	}
-	
-	
+	*/
 	
 	@Operation(summary = "Saves a provided subscription profiles.", method = "POST", tags = "Subscription Profiles")
-	@ApiResponses({
-		/* 
+	@ApiResponses({ 
 		@ApiResponse(
 	        responseCode = "201",
 			description="User's subscription profile successfully saved.",
@@ -146,43 +145,28 @@ public class SubscriptionController {
 						schema = @Schema(type = "string")
 				)
 			}
-			),
-		*/
-	@ApiResponse(responseCode="404",description="Passed Email address is already registerd.",content=@Content(schema=@Schema(implementation=Subscription.class),
-	// examples = {@ExampleObject(name = "getAllSubscription", summary = "Retrieves all user subscription registered.",
-	examples={@ExampleObject(value="{ \"timestamp\":\"2023-04-13T19:42:38.918+00:00\", \"status\":\"404\", \"error\":\"Conflict\", \"path\":\"/api/v1/subscription\" }")},mediaType="application/json")),@ApiResponse(responseCode="408",description="Bad formated request.",content=@Content(schema=@Schema(implementation=Subscription.class),examples={@ExampleObject(value="{ \"timestamp\":\"2023-04-13T19:42:38.918+00:00\", \"status\":\"404\", \"error\":\"Bad Request\", \"path\":\"/api/v1/subscription\" }")},mediaType="application/json"))
-
+		)
 	})
-        */
 
 	@PostMapping("/subscription")
 	public Subscription createSubscription(@RequestBody Subscription subscription) {
 		/* GAGA */
-		System.out.println("HTTP-POST Subscription (/api/subscription)");
-		System.out.println(" - Input: subscription is an array: " + subscription.getClass().isArray());
-		System.out.println(" - Input: subscription is an isEnum: " + subscription.getClass().isEnum());
-		System.out.println(" - Input: subscription is a Member Class: " + subscription.getClass().isMemberClass());
-		System.out.println(" - Input: subscription is a Local Class: " + subscription.getClass().isLocalClass());
+	System.out.println("HTTP-POST Subscription (/api/subscription)");System.out.println(" - Input: subscription is an array: "+subscription.getClass().isArray());System.out.println(" - Input: subscription is an isEnum: "+subscription.getClass().isEnum());System.out.println(" - Input: subscription is a Member Class: "+subscription.getClass().isMemberClass());System.out.println(" - Input: subscription is a Local Class: "+subscription.getClass().isLocalClass());
 
-		System.out.println("xxx: " + ResponseEntity.ok(subscription));
+	System.out.println("xxx: "+ResponseEntity.ok(subscription));
 
-		System.out.println("subscription{}");
-		System.out.println("    - Element: " + subscription.getEmailId());
-		System.out.println("    - Element: " + subscription.getFirstName());
-		System.out.println("    - Element: " + subscription.getLastName());
-		System.out.println("    - Element: " + subscription.getId());
-				System.out.println("bla    - Element: " + subscription.getId());
+	System.out.println("subscription{}");System.out.println("    - Element: "+subscription.getEmailId());System.out.println("    - Element: "+subscription.getFirstName());System.out.println("    - Element: "+subscription.getLastName());System.out.println("    - Element: "+subscription.getId());System.out.println("bla    - Element: "+subscription.getId());
 
-
-		// Verify if email address is already registered
-		List<Subscription> subscription_list = subscriptionRepository.findAll();
-		for (Subscription item : subscription_list) {
-			if (item.getEmailId().contains(subscription.getEmailId())) {
-				throw new ResourceConflictException("Email " + subscription.getEmailId() + " already registered");
-			}
+	// Verify if email address is already registered
+	List<Subscription> subscription_list = subscriptionRepository.findAll();for(
+	Subscription item:subscription_list)
+	{
+		if (item.getEmailId().contains(subscription.getEmailId())) {
+			throw new ResourceConflictException("Email " + subscription.getEmailId() + " already registered");
 		}
+	}
 
-		return subscriptionRepository.save(subscription);
+	return subscriptionRepository.save(subscription);
 	}
 
 	@Operation(summary = "Saves a provided array of subscription profiles.", method = "POST", tags = "Array of Subscription Profiles")
@@ -205,6 +189,7 @@ public class SubscriptionController {
 			@ApiResponse(responseCode = "408", description = "Bad formated request.", content = @Content(schema = @Schema(implementation = Subscription.class), examples = {
 					@ExampleObject(value = "{ \"timestamp\":\"2023-04-13T19:42:38.918+00:00\", \"status\":\"404\", \"error\":\"Bad Request\", \"path\":\"/api/v1/subscription\" }") }, mediaType = "application/json"))
 	})
+
 	@PostMapping("/subscriptions")
 	public Subscription[] createSubscriptionArray(@RequestBody Subscription subscriptionArray[]) {
 		/* GAGA */
