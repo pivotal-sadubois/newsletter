@@ -69,7 +69,7 @@ public class SubscriptionController {
 	}
 
 	/* DELETE ALL SUBSCRIPTIONS */
-	
+	/*
 	@Operation(summary = "Delete all subscription profiles", method = "DELETE", tags = "Array of Subscription Profiles")
 	@ApiResponses({
 		@ApiResponse(
@@ -153,6 +153,7 @@ public class SubscriptionController {
 	examples={@ExampleObject(value="{ \"timestamp\":\"2023-04-13T19:42:38.918+00:00\", \"status\":\"404\", \"error\":\"Conflict\", \"path\":\"/api/v1/subscription\" }")},mediaType="application/json")),@ApiResponse(responseCode="408",description="Bad formated request.",content=@Content(schema=@Schema(implementation=Subscription.class),examples={@ExampleObject(value="{ \"timestamp\":\"2023-04-13T19:42:38.918+00:00\", \"status\":\"404\", \"error\":\"Bad Request\", \"path\":\"/api/v1/subscription\" }")},mediaType="application/json"))
 
 	})
+        */
 
 	@PostMapping("/subscription")
 	public Subscription createSubscription(@RequestBody Subscription subscription) {
