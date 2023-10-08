@@ -5,13 +5,15 @@ metadata:
   description: Newsletter Application
   annotations:
     'backstage.io/techdocs-ref': dir:.
+    'backstage.io/source-location: url: "https://github.com/pivotal-sadubois/newsletter/blob/main/catalog"'
+
 spec:
   targets:
     - resources/newsletter-db/newsletter-db.yaml
-    - groups/newsletter-team.yaml
-    - components/newsletter-db/newsletter-db.yaml
-    - components/newsletter-subscription/newsletter-subscription.yaml
-    - components/newsletter-ui/newsletter-ui.yaml
-    - systems/newsletter.yaml 
-    - domain/ecommerce-marketplace.yaml
-    - api/newsletter-subscription/newsletter-subscription.yaml
+#    - groups/newsletter-team.yaml
+#    - components/newsletter-db/newsletter-db.yaml
+#    - components/newsletter-subscription/newsletter-subscription.yaml
+#    - components/newsletter-ui/newsletter-ui.yaml
+#    - systems/newsletter.yaml 
+#    - domain/ecommerce-marketplace.yaml
+#    - api/newsletter-subscription/newsletter-subscription.yaml
