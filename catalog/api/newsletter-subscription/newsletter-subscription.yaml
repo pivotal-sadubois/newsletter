@@ -394,6 +394,7 @@ spec:
     - url: https://newsletter-subscription.dev.tap.tanzudemohub.com
     - url: https://newsletter-subscription.dev.tapmc.tanzudemohub.com
     - url: https://newsletter-subscription.dev.aztap.tanzudemohub.com
+    - url: https://newsletter-subscription.dev.tap.h2odemo.de
     tags:
     - name: Subscription REST API
     
