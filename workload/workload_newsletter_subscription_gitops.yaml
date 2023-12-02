@@ -31,9 +31,7 @@ spec:
       system: newsletter-subscription
       type: openapi
   - name: gitops_ssh_secret
-    value: git-secret
-  - name: gitops_repository
-    value: https://github.com/sdubois-tapdemo/newsletter/newsletter-subscription/cartographer
+    value: github-http-secret
   serviceClaims:
   - name: db
     ref:
