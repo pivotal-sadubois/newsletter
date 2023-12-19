@@ -1,0 +1,23 @@
+<div class ="container">
+    <div class = "card">
+        <h3 class="text-center"> Subscription List</h3>
+        <div class = "card-body">
+            <table class="table table-striped">
+                <thead>
+                    <th>Id</th>
+                    <th> First Name</th>
+                    <th> Last Name</th>
+                    <th> Email </th>
+                </thead>
+                <tbody>
+                    <tr *ngFor = "let subscription of subscriptions">
+                        <td> {{ subscription.id}}</td>
+                        <td> {{ subscription.firstName}}</td>
+                        <td> {{ subscription.lastName}}</td>
+                        <td> {{ subscription.emailId}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
