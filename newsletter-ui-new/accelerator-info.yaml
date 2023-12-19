@@ -1,0 +1,16 @@
+id: 3749f5a2-818b-4252-ab6d-7664cdcdc7b4
+timestamp: 2023-12-17T21:28:56.791Z
+source: VSCODE
+username: sdubois
+accelerator:
+  name: angular-frontend
+fragments:
+  - name: tap-workload
+options:
+  projectName: angular-frontend
+  artifactId: angular-frontend
+  backendService: customer-profile-backend.namespace
+  useSingleSignOn: false
+  namespace: <your-namespace>
+  bsGitRepository: github.com?owner=sdubois-tapdemo&repo=angular-frontend
+  bsGitBranch: main
