@@ -8,7 +8,7 @@ import { Subscription } from './subscription';
 })
 export class SubscriptionService {
 
-  private baseUrl = "http://newsletter-subscription.newsletter.svc/api/v1/subscriptions";
+  private baseUrl = "https://newsletter-subscription.newsletter.svc/api/v1/subscriptions";
 
   constructor(private http: HttpClient) { }
 
