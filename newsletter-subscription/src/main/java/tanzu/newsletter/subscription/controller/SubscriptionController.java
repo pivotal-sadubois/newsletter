@@ -97,6 +97,7 @@ public class SubscriptionController {
                 )
         })
 
+        @CrossOrigin
         @GetMapping("/subscriptions")
         public List<Subscription> getAllSubscription() {
                 System.out.println("HTTP-GET-2: /api/subscriptions hallo");
@@ -120,6 +121,7 @@ public class SubscriptionController {
                 )
         })
 
+        @CrossOrigin
         @DeleteMapping("/subscriptions")
         public ResponseEntity<Map<String, Boolean>> deletetAllSubscription(){
                 System.out.println("HTTP-DELETE: /api/subscriptions");
@@ -186,6 +188,7 @@ public class SubscriptionController {
                 )
 	})
 
+        @CrossOrigin
         @PostMapping("/subscription")
         public Subscription createSubscription(@RequestBody Subscription subscription) {
                 /* GAGA */
@@ -272,6 +275,7 @@ public class SubscriptionController {
 		)
         })
 
+        @CrossOrigin
         @PostMapping("/subscriptions")
         public Subscription[] createSubscriptionArray(@RequestBody Subscription subscriptionArray[]) {
                 /* GAGA */
@@ -345,6 +349,7 @@ public class SubscriptionController {
                 )
         })
 
+        @CrossOrigin
         @GetMapping("/subscription/{id}")
         public ResponseEntity<Subscription> getSubscriptionById(@PathVariable Long id) {
                 Subscription subscription = subscriptionRepository.findById(id)
@@ -400,6 +405,7 @@ public class SubscriptionController {
                 )
         })
 
+        @CrossOrigin
         @PutMapping("/subscription/{id}")
         public ResponseEntity<Subscription> updateSubscription(@PathVariable Long id,
                         @RequestBody Subscription subscriptionDetails) {
@@ -449,6 +455,7 @@ public class SubscriptionController {
                 )
         })
         
+        @CrossOrigin
         @DeleteMapping("/subscription/{id}")
         public ResponseEntity<Map<String, Boolean>> deleteSubscription(
                         //@Schema(required = true, example = "32126319")
