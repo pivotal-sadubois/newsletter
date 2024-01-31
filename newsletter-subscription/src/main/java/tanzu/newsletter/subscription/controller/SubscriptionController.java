@@ -148,14 +148,14 @@ public class SubscriptionController {
                         responseCode = "201",
                         description="User's subscription profile successfully saved.",
                         content = @Content(
-                                schema = @Schema(implementation = Subscription.class), 
+                                array = @ArraySchema(schema = @Schema(implementation = Subscription.class)), 
                                 mediaType="application/json",
                                 examples = {
                                         @ExampleObject(
                                                 name = "createSubscription", 
 						summary = "Add subscription profile.", 
 						description = "RSubmitts a Newsletter subscription profils.", 
-                                                value = "[{ \"emailId\":\"frank@example.com\", \"firstName\":\"Frank\", \"lastName\":\"Zappa\"}]"
+                                                value = "{ \"emailId\":\"frank@example.com\", \"firstName\":\"Frank\", \"lastName\":\"Zappa\"}"
                                         )
                                 }
                         ),
@@ -225,10 +225,11 @@ public class SubscriptionController {
 						description = "Submitts an array of Newsletter subscription profiles.", 
                                                 value = "[{ \"emailId\":\"john@example.com\", \"firstName\":\"John\", \"lastName\":\"Fogerty\"}, { \"emailId\":\"frank@example.com\", \"firstName\":\"Frank\", \"lastName\":\"Zappa\"}, {\"emailId\":\"bob@example.com\", \"firstName\":\"Bob\", \"lastName\":\"Seger\"}]"
                                         ),
-					@ExampleObject(name = "createSubscription", 
+                                         @ExampleObject(
+                                                name = "createSubscription", 
 						summary = "Add subscription profile.", 
 						description = "RSubmitts a Newsletter subscription profils.", 
-                                                value = "[{ \"emailId\":\"frank@example.com\", \"firstName\":\"Frank\", \"lastName\":\"Zappa\"}]"
+                                                value = "{ \"emailId\":\"frank@example.com\", \"firstName\":\"Frank\", \"lastName\":\"Zappa\"}"
                                         )
 				}
 			), 
