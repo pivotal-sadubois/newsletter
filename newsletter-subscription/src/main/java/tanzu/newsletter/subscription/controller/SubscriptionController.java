@@ -148,7 +148,8 @@ public class SubscriptionController {
                         responseCode = "201",
                         description="User's subscription profile successfully saved.",
                         content = @Content(
-                                array = @ArraySchema(schema = @Schema(implementation = Subscription.class)), 
+                                //array = @ArraySchema(schema = @Schema(implementation = Subscription.class)),
+                                schema = @Schema(implementation = Subscription.class),
                                 mediaType="application/json",
                                 examples = {
                                         @ExampleObject(
@@ -216,7 +217,7 @@ public class SubscriptionController {
 			responseCode = "200", 
 			description = "User's test subscription profile successfully saved.", 
 			content = @Content(
-				array = @ArraySchema(schema = @Schema(implementation = Subscription.class)), 
+				//array = @ArraySchema(schema = @Schema(implementation = Subscription.class)), 
 				mediaType = "application/json", 
 				examples = {
 					@ExampleObject(
@@ -229,7 +230,7 @@ public class SubscriptionController {
                                                 name = "createSubscription", 
 						summary = "Add subscription profile.", 
 						description = "RSubmitts a Newsletter subscription profils.", 
-                                                value = "{ \"emailId\":\"frank@example.com\", \"firstName\":\"Frank\", \"lastName\":\"Zappa\"}"
+                                                value = "[{ \"emailId\":\"frank@example.com\", \"firstName\":\"Frank\", \"lastName\":\"Zappa\"}]"
                                         )
 				}
 			), 
