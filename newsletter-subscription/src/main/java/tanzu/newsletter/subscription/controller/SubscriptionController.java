@@ -1,3 +1,19 @@
+/*
+ * Copyright 2002-2022 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package tanzu.newsletter.subscription.controller;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -25,22 +41,201 @@ import tanzu.newsletter.subscription.exception.ResourceConflictException;
 import tanzu.newsletter.subscription.exception.ResourceNotFoundException;
 import tanzu.newsletter.subscription.model.Subscription;
 import tanzu.newsletter.subscription.repository.SubscriptionRepository;
+import tanzu.newsletter.subscription.service.SubscriptionService;
 
 @OpenAPIDefinition(info = @Info(title = "Newsletter Application", version = "1.0"), tags = @Tag(name = "Subscription Profile Management (Rest CRUD API)"))
 
 @Schema(required = true, example = "1111111")
 
+
+// SubscriptionServiceBackend			subscription-service-backend
+// SubscriptionServiceAngularUI			subscription-service-ui
+// SubscriptionServiceThymeleafUI		subscription-service-ui
+
+/**
+ * Base class for SpringMVC RestAPI Controller to Manage Subscriptions (CRUD)
+ *
+ * @author Sacha Dubois
+ */
 @CrossOrigin
 @RestController
 @RequestMapping("/api/v1/")
 public class SubscriptionController {
-	@Autowired
-	private SubscriptionRepository subscriptionRepository;
+	private SubscriptionService subscriptionService;
 
+	public SubscriptionController(SubscriptionService theSubscriptionService) {
+		this.subscriptionService = theSubscriptionService;
+	}
+
+	@RequestMapping("/")
+	public @ResponseBody String greeting() {
+		return "Hello, World";
+	}
+
+	@CrossOrigin
+	@GetMapping("/subscriptions")
+	public List<Subscription> getAllSubscription() {
+		return subscriptionService.findAll();
+	}
+
+	@CrossOrigin
+	@PostMapping("/subscriptions")
+	public Subscription[] createSubscriptionArray(@RequestBody Subscription subscriptionArray[]) {
+		System.out.println("HTTP-POST Subscription Array (/api/subscriptions)");
+		System.out.println("- Input: subscriptionArray is an array: " + subscriptionArray.getClass().isArray());
+
+		for (Subscription ArrayItem : subscriptionArray) {
+			System.out.println("xxx: " + ResponseEntity.ok(ArrayItem));
+			System.out.println("subscriptionArray[]");
+			System.out.println("    - Element: " + ArrayItem.getEmailId());
+			System.out.println("    - Element: " + ArrayItem.getFirstName());
+			System.out.println("    - Element: " + ArrayItem.getLastName());
+
+			// Verify if email address is already registered
+			List<Subscription> subscriptionList = subscriptionService.findAll();
+			for (Subscription item : subscriptionList) {
+				if (item.getEmailId().contains(ArrayItem.getEmailId())) {
+					throw new ResourceConflictException("Email " + ArrayItem.getEmailId() + " already registered");
+				}
+			}
+
+			subscriptionService.save(ArrayItem);
+		}
+		return subscriptionArray;
+	}
+
+	/**
+	 * createSubscription - This method creates a new subscription
+	 *
+	 * @param id the subscription Id
+	 * @return the sum of a and b
+	 * @throws:
+	 */
+	@CrossOrigin
+	@PostMapping("/subscription")
+	public Subscription createSubscription(@RequestBody Subscription subscription) {
+		System.out.println("HTTP-POST Subscription (/api/subscription)");
+		System.out.println(" - Input: subscription is an array: "+subscription.getClass().isArray());System.out.println(" - Input: subscription is an isEnum: "+subscription.getClass().isEnum());System.out.println(" - Input: subscription is a Member Class: "+subscription.getClass().isMemberClass());System.out.println(" - Input: subscription is a Local Class: "+subscription.getClass().isLocalClass());
+		System.out.println("xxx: "+ResponseEntity.ok(subscription));
+		System.out.println("subscription{}");System.out.println("    - Element: "+subscription.getEmailId());System.out.println("    - Element: "+subscription.getFirstName());System.out.println("    - Element: "+subscription.getLastName());System.out.println("    - Element: "+subscription.getId());System.out.println("bla    - Element: "+subscription.getId());
+
+		// Verify if email address is already registered
+		List<Subscription> subscription_list = subscriptionService.findAll();
+		for(
+				Subscription item:subscription_list){
+			if (item.getEmailId().contains(subscription.getEmailId())) {
+				throw new ResourceConflictException("Email " + subscription.getEmailId() + " already registered");
+			}
+		}
+
+		return subscriptionService.save(subscription);
+	}
+
+	@GetMapping("/subscription/{id}")
+	public Subscription getSubscriptionById(@PathVariable Long id) {
+		return subscriptionService.findById(id);
+	}
+
+	/**
+	 * updateSubscription - This method updates an existing subscription
+	 *
+	 * @param: id - must not be null.
+	 * @return: A ResponseEntity<Subscription>
+	 */
+	@CrossOrigin
+	@PutMapping("/subscription/{id}")
+	public ResponseEntity<Subscription> updateSubscription(@PathVariable Long id, @RequestBody Subscription subscriptionDetails) {
+		Subscription subscription = subscriptionService.findById(id);
+		subscription.setFirstName(subscriptionDetails.getFirstName());
+		subscription.setLastName(subscriptionDetails.getLastName());
+		subscription.setEmailId(subscriptionDetails.getEmailId());
+
+		Subscription updatedSubscription = subscriptionService.save(subscription);
+		return ResponseEntity.ok(updatedSubscription);
+	}
+
+	/**
+	 * deleteSubscription - This method deletes an existing subscription
+	 *
+	 * @param: id - must not be null.
+	 * @return: A ResponseEntity<Subscription>
+	 */
+
+	@CrossOrigin
+	@DeleteMapping("/subscription/{id}")
+	public ResponseEntity<Map<String, Boolean>> deleteSubscription(
+			@Parameter(description = "The name that needs to be fetched. Use user1 for testing. ", required = true) @PathVariable Long id) {
+
+		subscriptionService.deleteById(id);
+
+		Map<String, Boolean> response = new HashMap<>();
+		response.put("deleted", Boolean.TRUE);
+		return ResponseEntity.ok(response);
+	}
+
+
+
+
+	/*
+	// add mapping for '/list'
+	@GetMapping("/list")
+	public String listEmployees(Model theModel) {
+		// get the employees from the db
+		List<Subscription> theEmployees = subscriptionService.findAll();
+
+		// add to the spring model
+		theModel.addAttribute("employees", theEmployees);
+
+		return "employees/list-employees";
+	}
+
+	@GetMapping("/showFormforAdd")
+	public String showFormforAdd(Model theModel) {
+		Employee theEmployee = new Subscription();
+
+		theModel.addAttribute("employee", theEmployee);
+		return "employees/employee-form";
+	}
+
+	@GetMapping("/showFormForUpdate")
+	public String showFormForUpdate(@RequestParam("employeeId") int theId, Model theModel) {
+		// set the employee from the service
+		Subscription theEmployee = subscriptionService.findById(theId);
+
+		// set employ as a mpdel attribute to populate the form
+		theModel.addAttribute("employee", theEmployee);
+
+		// send over to our form
+
+		return "employees/employee-form";
+	}
+
+	@PostMapping("/save")
+	public String saveEmployee(@ModelAttribute("employee") Employee theEmployee) {
+		// save the employee
+		subscriptionService.save(theEmployee);
+
+		// use redirect
+		return "redirect:/employees/list";
+	}
+
+	@GetMapping("/delete")
+	public String delete(@RequestParam("employeeId") int theId) {
+		// delete the employee
+		subscriptionService.deleteById(theId);
+
+		// redirect to the /employee/list
+		return "redirect:/employees/list";
+	}
+
+*/
+
+
+	// ------------------------------------------------------------------------------------------------------
+
+/*
 	// get all subscriptions
 	@Operation(summary = "Get all subscription profiles registered.", method = "GET", tags = "Array of Subscription Profiles")
-	//@Parameter(description = "domain name")
-	//@Parameter(description = "domain extension")
 	@ApiResponses({
 		@ApiResponse(
             responseCode = "200",
@@ -90,7 +285,7 @@ public class SubscriptionController {
 	})
 
 	@CrossOrigin
-	@GetMapping("/subscriptions")
+	@GetMapping("/Xsubscriptions")
 	public List<Subscription> getAllSubscription() {
 		System.out.println("HTTP-GET-2: /api/subscriptions hallo");
 
@@ -133,6 +328,8 @@ public class SubscriptionController {
 		return ResponseEntity.ok(response);
 	}
     */
+
+	/*
 	@Operation(summary = "Saves a provided subscription profiles.", method = "POST", tags = "Subscription Profile")
 	@ApiResponses({
 		@ApiResponse(
@@ -179,11 +376,12 @@ public class SubscriptionController {
 			}
 		)
 	})
+*/
 
+	/*
     @CrossOrigin
     @PostMapping("/subscription")
     public Subscription createSubscription(@RequestBody Subscription subscription) {
-		/* GAGA */
 		System.out.println("HTTP-POST Subscription (/api/subscription)");
 		System.out.println(" - Input: subscription is an array: "+subscription.getClass().isArray());System.out.println(" - Input: subscription is an isEnum: "+subscription.getClass().isEnum());System.out.println(" - Input: subscription is a Member Class: "+subscription.getClass().isMemberClass());System.out.println(" - Input: subscription is a Local Class: "+subscription.getClass().isLocalClass());
 		System.out.println("xxx: "+ResponseEntity.ok(subscription));
@@ -273,7 +471,6 @@ public class SubscriptionController {
 	@CrossOrigin
 	@PostMapping("/subscriptions")
 	public Subscription[] createSubscriptionArray(@RequestBody Subscription subscriptionArray[]) {
-		/* GAGA */
 		System.out.println("HTTP-POST Subscription Array (/api/subscriptions)");
 		System.out.println("- Input: subscriptionArray is an array: " + subscriptionArray.getClass().isArray());
 
@@ -350,6 +547,21 @@ public class SubscriptionController {
 		return ResponseEntity.ok(subscription);
 	}
 
+	@ExceptionHandler
+    public ResponseEntity<StudentErrorResponse> HandleException(StudentNotFoundException exc) {
+        System.out.println("Handle Exception: StudentNotFoundException");
+
+        // create a studenetErrorRespnse
+        StudentErrorResponse error = new StudentErrorResponse();
+        error.setMessage(exc.getMessage());
+        error.setStatus(HttpStatus.NOT_FOUND.value());
+        error.setTimeStamp(System.currentTimeMillis());
+
+        // return a response Entty
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+
 	// update subscription rest api
 	@Operation(summary = "Update provided user subscription profiles.", method = "PUT", tags = "Subscription Profiles")
 	@ApiResponses({
@@ -397,7 +609,15 @@ public class SubscriptionController {
 			)
 		)
 	})
+*/
+	/**
+	 * This method updates an existing subscription
+	 *
+	 * @param id the subscription Id
+	 * @return the sum of a and b
+	 */
 
+	/*
 	@CrossOrigin
 	@PutMapping("/subscription/{id}")
 	public ResponseEntity<Subscription> updateSubscription(@PathVariable Long id, @RequestBody Subscription subscriptionDetails) {
@@ -461,4 +681,6 @@ public class SubscriptionController {
 		response.put("deleted", Boolean.TRUE);
 		return ResponseEntity.ok(response);
 	}
+
+	 */
 }

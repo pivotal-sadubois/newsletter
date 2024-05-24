@@ -61,3 +61,14 @@ $ curl -X GET -H 'Content-Type: application/json' http://localhost:8080/v3/api-d
 $ curl -X GET -H 'Content-Type: application/json' http://localhost:8080/actuator | jq -r
 ```
 
+## Running JUnit tests
+mvn test -Dspring.profiles.active=local 
+If you want to run a specific test class, you can use the -Dtest parameter followed by the name of the test class:
+```
+mvn test -Dspring.profiles.active=local -Dtest=SubscriptionControllerTest
+```
+
+Or if you want to run a specific test method within a test class, you can use:
+```
+mvn test -Dspring.profiles.active=local -Dtest=SubscriptionControllerTest#testGetSubscriptionByIdOk
+```

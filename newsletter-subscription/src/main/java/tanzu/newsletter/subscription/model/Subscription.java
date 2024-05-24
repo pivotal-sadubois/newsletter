@@ -12,6 +12,7 @@ import jakarta.persistence.Table;
 public class Subscription {
 	@Id
     @GeneratedValue (strategy = GenerationType.SEQUENCE)
+	@Column(name="id")
 	private long id;
 	
 	@Column(name = "first_name")
