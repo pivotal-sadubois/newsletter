@@ -2,7 +2,7 @@ pipeline {
     agent { node { label 'buildhost' } }
     
     environment {
-        ARTIFACT_ID = readMavenPom(file: newsletter-subscription/pom.xml).getArtifactId()
+        ARTIFACT_ID = readMavenPom().getArtifactId()
 
         MYSQL_INTEGRATION_USER     = credentials('mysql-integration-user')
         MYSQL_INTEGRATION_PASSWORD = credentials('mysql-integration-password')
