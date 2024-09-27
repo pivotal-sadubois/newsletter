@@ -1,0 +1,52 @@
+pipeline {
+    agent { node { label 'buildhost' } }
+    
+    environment {
+        ARTIFACT_ID = readMavenPom(file: newsletter-subscription/pom.xml).getArtifactId()
+
+        MYSQL_INTEGRATION_USER     = credentials('mysql-integration-user')
+        MYSQL_INTEGRATION_PASSWORD = credentials('mysql-integration-password')
+        
+        GIT_REPO = "https://github.com/pivotal-sadubois/newsletter.git"
+        GIT_CREDENTIALS = "github"
+        BRANCH = "main"
+        DIRECTORY = "newsletter-subscription/"
+    }
+    
+    stages {
+        stage("Clone Repository") {
+            steps {
+                script {
+                    echo "Clone ${DIRECTORY} repository..."
+                    checkout([$class: 'GitSCM', branches: [[name: "${BRANCH}"]],
+                        doGenerateSubmoduleConfigurations: false,
+                        extensions: [[$class: 'SparseCheckoutPaths', sparseCheckoutPaths: [[path: env.DIRECTORY]]]],
+                        submoduleCfg: [],
+                        userRemoteConfigs: [[credentialsId: "${GIT_CREDENTIALS}", url: "${GIT_REPO}"]]])
+                }
+            }
+        }
+        stage('Build') {
+            steps {
+                // Run Maven on a Unix agent.
+                sh "mvn -Dmaven.test.failure.ignore=true \
+                        -Dspring.profiles.active=integration \
+                        -Dspring.datasource.username=$MYSQL_INTEGRATION_USER \
+                        -Dspring.datasource.password=$MYSQL_INTEGRATION_PASSWORD \
+                        clean package"
+                        
+                // To run Maven on a Windows agent, use
+                // bat "mvn -Dmaven.test.failure.ignore=true clean package"
+            }
+
+            post {
+                // If Maven was able to run the tests, even if some of the test
+                // failed, record the test results and archive the jar file.
+                success {
+                    junit 'target/surefire-reports/TEST-*.xml'
+                    archiveArtifacts 'target/*.jar'
+                }
+            }
+        }
+    }
+}
