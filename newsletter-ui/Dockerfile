@@ -1,8 +1,8 @@
 # Base image for Node.js build
-FROM node:14 AS build
+FROM node:20 AS build
 
 # Set working directory inside the container
-WORKDIR /app
+WORKDIR /
 
 # Copy the app code to the working directory
 COPY . .
