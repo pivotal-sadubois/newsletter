@@ -9,20 +9,18 @@ pipeline {
     agent { node { label 'buildhost' } }
     
     environment {
-        pom = readMavenPom file: 'newsletter-subscription/pom.xml'
-        ARTIFACT_ID = pom.getArtifactId()
-        ARTIFACT_VERSION = pom.getVersion()
-        //DEPLOYMENT= "${params.deployment}"
         DEPLOYMENT="integration"
 
+        // Extract MYSQL Credentials from Jenkins 
         MYSQL_INTEGRATION_USER     = credentials('mysql-integration-user')
         MYSQL_INTEGRATION_PASSWORD = credentials('mysql-integration-password')
         
-        // Harbor Registry Credentials
+        // Define Harbor Registry Credentials
         TDH_HARBOR_REGISTRY_DNS_HARBOR      =  "harbor.apps.corelab.core-software.ch"
         TDH_HARBOR_REGISTRY_ADMIN_USER      =  credentials('harbor-registry-user')
         TDH_HARBOR_REGISTRY_ADMIN_PASSWORD  =  credentials('harbor-registry-password')
         
+        // Define Newsletter Application Git Repository Parameters
         GIT_REPO = "https://github.com/pivotal-sadubois/newsletter.git"
         GIT_CREDENTIALS = "github"
         BRANCH = "main"
@@ -58,6 +56,12 @@ pipeline {
         }
         stage ('Build Docker Image') {
             steps {
+                script {
+                    def pom = readMavenPom file: "${APP_DIRECTORY}/pom.xml"
+                    env.ARTIFACT_ID = pom.artifactId
+                    env.ARTIFACT_VERSION = pom.version
+                }
+                
                 dir("$APP_DIRECTORY") {
                     sh('docker build -f deploy/Dockerfile \
                         --build-arg JAR_FILE=target/${ARTIFACT_ID}-${ARTIFACT_VERSION}.jar \
@@ -82,4 +86,3 @@ pipeline {
         }
     }
 }
-
