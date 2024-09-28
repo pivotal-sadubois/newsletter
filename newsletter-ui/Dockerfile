@@ -2,10 +2,10 @@
 FROM node:20 AS build
 
 # Set working directory inside the container
-WORKDIR /
+WORKDIR /app
 
 # Copy the app code to the working directory
-COPY . .
+COPY . /app
 
 # Install dependencies and build the AngularJS project
 RUN npm install
