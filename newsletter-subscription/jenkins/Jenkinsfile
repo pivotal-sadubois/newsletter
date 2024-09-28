@@ -1,0 +1,85 @@
+// --------------------------------------------------------------------------------------------                                  
+// File: ........: Jenkinsfile 
+// Git Repository: https://github.com/pivotal-sadubois/newsletter.git
+// Location .....: newsletter/newsletter-subscription 
+// Author .......: Sacha Dubois, Fortinet                                                                                          
+// Description ..: Build and Deploy the Newsletter Application to Kubernetes                                                                      
+// --------------------------------------------------------------------------------------------   
+pipeline {
+    agent { node { label 'buildhost' } }
+    
+    environment {
+        pom = readMavenPom file: 'newsletter-subscription/pom.xml'
+        ARTIFACT_ID = pom.getArtifactId()
+        ARTIFACT_VERSION = pom.getVersion()
+        //DEPLOYMENT= "${params.deployment}"
+        DEPLOYMENT="integration"
+
+        MYSQL_INTEGRATION_USER     = credentials('mysql-integration-user')
+        MYSQL_INTEGRATION_PASSWORD = credentials('mysql-integration-password')
+        
+        // Harbor Registry Credentials
+        TDH_HARBOR_REGISTRY_DNS_HARBOR      =  "harbor.apps.corelab.core-software.ch"
+        TDH_HARBOR_REGISTRY_ADMIN_USER      =  credentials('harbor-registry-user')
+        TDH_HARBOR_REGISTRY_ADMIN_PASSWORD  =  credentials('harbor-registry-password')
+        
+        GIT_REPO = "https://github.com/pivotal-sadubois/newsletter.git"
+        GIT_CREDENTIALS = "github"
+        BRANCH = "main"
+        APP_DIRECTORY = "newsletter-subscription/"
+    }
+    
+    stages {
+        stage ('Git Checkout') {
+            steps {
+                git branch: "$BRANCH", url: "$GIT_REPO"
+            }
+        }
+        stage('Build') {
+            steps {
+                dir("$APP_DIRECTORY") {
+                    // Run Maven on a Unix agent.
+                    sh('mvn -Dmaven.test.failure.ignore=true \
+                        -Dspring.profiles.active=integration \
+                        -Dspring.datasource.username=$MYSQL_INTEGRATION_USER \
+                        -Dspring.datasource.password=$MYSQL_INTEGRATION_PASSWORD \
+                        clean package')
+                }
+            }
+
+            post {
+                // If Maven was able to run the tests, even if some of the test
+                // failed, record the test results and archive the jar file.
+                success {
+                    junit 'newsletter-subscription/target/surefire-reports/TEST-*.xml'
+                    archiveArtifacts 'newsletter-subscription/target/*.jar'
+                }
+            }
+        }
+        stage ('Build Docker Image') {
+            steps {
+                dir("$APP_DIRECTORY") {
+                    sh('docker build -f deploy/Dockerfile \
+                        --build-arg JAR_FILE=target/${ARTIFACT_ID}-${ARTIFACT_VERSION}.jar \
+                        --build-arg IMAGE_VERSION=${ARTIFACT_VERSION} \
+                        -t ${ARTIFACT_ID}:${ARTIFACT_VERSION} .')
+                }
+            }
+        }
+        stage ('Push Container to Registry') {
+            steps {
+                dir("$APP_DIRECTORY") {
+                    // Login to the Harbir container Registry
+                    sh('docker login $TDH_HARBOR_REGISTRY_DNS_HARBOR \
+                        -u $TDH_HARBOR_REGISTRY_ADMIN_USER \
+                        -p $TDH_HARBOR_REGISTRY_ADMIN_PASSWORD')
+                    
+                    // TAG Docker Images for the Harbor Tegistry and upload the image
+                    sh('docker tag ${ARTIFACT_ID}:${ARTIFACT_VERSION} ${TDH_HARBOR_REGISTRY_DNS_HARBOR}/library/${ARTIFACT_ID}:latest')
+                    sh('docker push ${TDH_HARBOR_REGISTRY_DNS_HARBOR}/library/${ARTIFACT_ID}:latest')
+                }
+            }
+        }
+    }
+}
+
