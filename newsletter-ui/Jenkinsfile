@@ -1,0 +1,99 @@
+// --------------------------------------------------------------------------------------------                                  
+// File: ........: Jenkinsfile 
+// Git Repository: https://github.com/pivotal-sadubois/newsletter.git
+// Location .....: newsletter/newsletter-ui 
+// Author .......: Sacha Dubois, Fortinet                                                                                          
+// Description ..: Build and Deploy the Newsletter Application to Kubernetes                                                                      
+// --------------------------------------------------------------------------------------------   
+pipeline {
+    agent { label 'buildhost' }
+
+    environment {
+        // Define Harbor Registry Credentials
+        TDH_HARBOR_REGISTRY_DNS_HARBOR      =  "harbor.apps.corelab.core-software.ch"
+        TDH_HARBOR_REGISTRY_ADMIN_USER      =  credentials('harbor-registry-user')
+        TDH_HARBOR_REGISTRY_ADMIN_PASSWORD  =  credentials('harbor-registry-password')
+        
+        GIT_REPO = "https://github.com/pivotal-sadubois/newsletter.git"
+        GIT_CREDENTIALS = "github"
+        BRANCH = "main"
+        APP_DIRECTORY = "newsletter-ui"
+        DOCKER_IMAGE = "newsletter-ui"
+        DOCKER_TAG = "latest"
+    }
+
+    stages {
+        stage('Git Checkout') {
+            steps {
+                git branch: "${BRANCH}", url: "${GIT_REPO}", credentialsId: "${GIT_CREDENTIALS}"
+            }
+        }
+
+        stage('Install Node.js & NPM') {
+            steps {
+                script {
+                    // Install Node.js and NPM if it's not already available
+                    sh '''
+                    if ! [ -x "$(command -v node)" ]; then
+                      echo "Node.js not installed. Installing..."
+                      sudo curl -sL https://deb.nodesource.com/setup_20.x | sudo bash -
+                      sudo apt-get update
+                      sudo apt-get install -y nodejs
+                    fi
+                    node -v
+                    npm -v
+                    '''
+                }
+            }
+        }
+
+        stage('Build AngularJS App') {
+            steps {
+                script {
+                    // Change to the app directory and install dependencies
+                    dir("${APP_DIRECTORY}") {
+                        sh 'npm install'
+                        sh 'npm run build --prod'  // Replace this with the actual build command for AngularJS
+                    }
+                }
+            }
+        }
+        
+        stage('Build Docker Image') {
+            steps {
+                dir("$APP_DIRECTORY") {
+                    script {
+                        // Build the Docker image with the built AngularJS app
+                        sh '''
+                        echo XXXXXXX
+                        pwd
+                        echo "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} -f Dockerfile ."
+                        docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} -f Dockerfile .
+                        '''
+                    }
+                }
+            }
+        }
+        
+        stage ('Push Docker Image to Harbor Registry') {
+            steps {
+                dir("$APP_DIRECTORY") {
+                    // Login to the Harbir container Registry
+                    sh('docker login $TDH_HARBOR_REGISTRY_DNS_HARBOR \
+                        -u $TDH_HARBOR_REGISTRY_ADMIN_USER \
+                        -p $TDH_HARBOR_REGISTRY_ADMIN_PASSWORD')
+                    
+                    // TAG Docker Images for the Harbor Tegistry and upload the image
+                    sh('docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${TDH_HARBOR_REGISTRY_DNS_HARBOR}/library/${DOCKER_IMAGE}:${DOCKER_TAG}')
+                    sh('docker push ${TDH_HARBOR_REGISTRY_DNS_HARBOR}/library/${DOCKER_IMAGE}:${DOCKER_TAG}')
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs() // Clean workspace after the build
+        }
+    }
+}
