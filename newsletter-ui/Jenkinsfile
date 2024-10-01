@@ -34,6 +34,7 @@ pipeline {
                 script {
                     // Install Node.js and NPM if it's not already available
                     sh '''
+                    echo "XXX GIT_REPOSITORY_URL:GIT_REPOSITORY_URL"
                     if ! [ -x "$(command -v node)" ]; then
                       echo "Node.js not installed. Installing..."
                       sudo curl -sL https://deb.nodesource.com/setup_20.x | sudo bash -
