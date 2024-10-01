@@ -23,19 +23,11 @@ pipeline {
     }
 
     stages {
-        stage('Git Checkout') {
-            steps {
-                git branch: "$GIT_BRANCH", url: "$GIT_REPOSITORY"
-            }
-        }
-
         stage('Install Node.js & NPM') {
             steps {
                 script {
                     // Install Node.js and NPM if it's not already available
                     sh '''
-echo "XXX GIT_REPOSITORY:$GIT_REPOSITORY"
-echo "XXX GIT_BRANCH:$GIT_BRANCH"
                     if ! [ -x "$(command -v node)" ]; then
                       echo "Node.js not installed. Installing..."
                       sudo curl -sL https://deb.nodesource.com/setup_20.x | sudo bash -
