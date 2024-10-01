@@ -14,9 +14,9 @@ pipeline {
         TDH_HARBOR_REGISTRY_ADMIN_USER      =  credentials('harbor-registry-user')
         TDH_HARBOR_REGISTRY_ADMIN_PASSWORD  =  credentials('harbor-registry-password')
         
-        // GIT_REPO = "https://github.com/pivotal-sadubois/newsletter.git"
-        // GIT_CREDENTIALS = "github"
-        // BRANCH = "main"
+        GIT_REPO = "https://github.com/pivotal-sadubois/newsletter.git"
+        GIT_CREDENTIALS = "github"
+        BRANCH = "main"
         APP_DIRECTORY = "newsletter-ui"
         DOCKER_IMAGE = "newsletter-ui"
         DOCKER_TAG = "latest"
@@ -25,7 +25,7 @@ pipeline {
     stages {
         stage('Git Checkout') {
             steps {
-                git branch: "$GIT_BRANCH", url: "$GIT_REPOSITORY"
+                git branch: "$BRANCH", url: "$GIT_REPO"
             }
         }
 
