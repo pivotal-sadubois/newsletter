@@ -25,11 +25,6 @@ pipeline {
     }
     
     stages {
-        stage ('Git Checkout') {
-            steps {
-                git branch: "$GIT_BRANCH", url: "$GIT_REPOSITORY"
-            }
-        }
         stage('Build') {
             steps {
                 dir("$APP_DIRECTORY") {
