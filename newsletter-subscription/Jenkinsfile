@@ -70,7 +70,7 @@ pipeline {
                 }
             }
         }
-        stage ('Push Container to Registry') {
+        stage ('Push Docker Image to Harbor Registry') {
             steps {
                 dir("$APP_DIRECTORY") {
                     // Login to the Harbir container Registry
@@ -81,6 +81,9 @@ pipeline {
                     // TAG Docker Images for the Harbor Tegistry and upload the image
                     sh('docker tag ${ARTIFACT_ID}:${ARTIFACT_VERSION} ${TDH_HARBOR_REGISTRY_DNS_HARBOR}/library/${ARTIFACT_ID}:latest')
                     sh('docker push ${TDH_HARBOR_REGISTRY_DNS_HARBOR}/library/${ARTIFACT_ID}:latest')
+
+                    // Cleanup Buildfiles
+                    sh('docker builder prune -f')
                 }
             }
         }
