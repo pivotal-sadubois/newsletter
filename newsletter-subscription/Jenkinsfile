@@ -21,16 +21,13 @@ pipeline {
         TDH_HARBOR_REGISTRY_ADMIN_PASSWORD  =  credentials('harbor-registry-password')
         
         // Define Newsletter Application Git Repository Parameters
-        GIT_REPO = "https://github.com/pivotal-sadubois/newsletter.git"
-        GIT_CREDENTIALS = "github"
-        BRANCH = "main"
         APP_DIRECTORY = "newsletter-subscription/"
     }
     
     stages {
         stage ('Git Checkout') {
             steps {
-                git branch: "$BRANCH", url: "$GIT_REPO"
+                git branch: "$GIT_BRANCH", url: "$GIT_REPOSITORY"
             }
         }
         stage('Build') {
