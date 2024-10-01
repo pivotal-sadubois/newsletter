@@ -14,9 +14,6 @@ pipeline {
         TDH_HARBOR_REGISTRY_ADMIN_USER      =  credentials('harbor-registry-user')
         TDH_HARBOR_REGISTRY_ADMIN_PASSWORD  =  credentials('harbor-registry-password')
         
-        GIT_REPO = "https://github.com/pivotal-sadubois/newsletter.git"
-        GIT_CREDENTIALS = "github"
-        BRANCH = "main"
         APP_DIRECTORY = "newsletter-ui"
         DOCKER_IMAGE = "newsletter-ui"
         DOCKER_TAG = "latest"
@@ -25,7 +22,7 @@ pipeline {
     stages {
         stage('Git Checkout') {
             steps {
-                git branch: "${BRANCH}", url: "${GIT_REPO}", credentialsId: "${GIT_CREDENTIALS}"
+                git branch: "${GIT_BRANCH}", url: "${GIT_REPOSITORY}", credentialsId: "${GIT_CREDENTIALS}"
             }
         }
 
@@ -34,7 +31,6 @@ pipeline {
                 script {
                     // Install Node.js and NPM if it's not already available
                     sh '''
-                    echo "XXX GIT_REPOSITORY_URL:$GIT_REPOSITORY_URL"
                     if ! [ -x "$(command -v node)" ]; then
                       echo "Node.js not installed. Installing..."
                       sudo curl -sL https://deb.nodesource.com/setup_20.x | sudo bash -
