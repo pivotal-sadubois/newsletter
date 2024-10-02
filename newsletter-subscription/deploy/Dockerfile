@@ -1,4 +1,4 @@
-FROM openjdk:17-slim AS builder
+FROM openjdk:21-slim AS builder
 WORKDIR /usr/local/temp
 ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} application.jar
@@ -17,4 +17,5 @@ COPY --from=builder /usr/local/temp/dependencies/ ./
 COPY --from=builder /usr/local/temp/spring-boot-loader/ ./
 COPY --from=builder /usr/local/temp/snapshot-dependencies/ ./
 COPY --from=builder /usr/local/temp/application/ ./
+ENV SPRING_PROFILES_ACTIVE=integration
 ENTRYPOINT ["java","org.springframework.boot.loader.JarLauncher"]
