@@ -1,4 +1,4 @@
-# Base image for Node.js build
+# Stage 1: Base image for Node.js build
 FROM node:20 AS build
 
 # Set working directory inside the container
@@ -16,6 +16,9 @@ FROM nginx:alpine
 
 # Copy the built app from the previous stage to the Nginx public directory
 COPY --from=build /app/dist /usr/share/nginx/html
+
+# Copy the custom Nginx configuration
+COPY nginx/default.conf /etc/nginx/conf.d/default.conf
 
 # Expose port 8080 to serve the app
 EXPOSE 8080
