@@ -8,7 +8,7 @@ import { Subscription } from './subscription';
 })
 export class SubscriptionService {
 
-  private baseUrl = "http://newsletter-subscription.newsletter.svc.cluster.local";
+  private baseUrl = "https://newsletter-subscription.apps.corelab.core-software.ch";
 
   constructor(private http: HttpClient) { }
 
