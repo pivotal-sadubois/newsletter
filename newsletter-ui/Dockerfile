@@ -17,8 +17,8 @@ FROM nginx:alpine
 # Copy the built app from the previous stage to the Nginx public directory
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Expose port 80 to serve the app
-EXPOSE 80
+# Expose port 8080 to serve the app
+EXPOSE 8080
 
 # Start Nginx server
 CMD ["nginx", "-g", "daemon off;"]
